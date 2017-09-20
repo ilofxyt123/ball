@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta charset="UTF-8">
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="apple-touch-fullscreen" content="yes"/>
+    <script src="js/resetRem.js?v1"></script>
+    <script>
+        var css;
+        css = '<'+'link '+'href='+"css/common.css?v"+Math.random()+' rel='+"stylesheet "+'type='+"text/css"+'>';
+        document.write(css);
+        css = '<'+'link '+'href='+"css/index.css?v"+Math.random()+' rel='+"stylesheet "+'type='+"text/css"+'>';
+        document.write(css);
+        css = '<'+'link '+'href='+"css/animate.css?v"+Math.random()+' rel='+"stylesheet "+'type='+"text/css"+'>';
+        document.write(css);
+    </script>
+    <style>
+        .dg.main.a{width:3.2rem !important;}
+    </style>
+    <title>vue</title>
+</head>
+<body>
+
+<div id="iCreative">
+    <div class="container P_bg">
+        <img src="assets/images/bg.jpg" class="bg-pic bg-pic1">
+    </div>
+
+    <!--loading-->
+    <transition leave-active-class="ani-fadeOut">
+        <div class="container P_loading" v-show="ploading.visible"></div>
+    </transition>
+
+    <!--p1-->
+    <transition enter-active-class="ani-fadeIn" leave-active-class="ani-fadeOut">
+        <div class="container P1" v-show="p1.visible" style="display:none;">
+            <div style="width:1rem;height:1rem;background-color:blue;position: absolute;left:1rem;top:2rem;" class="boy" @touchend.once="p1BtnChoseSex(0)"></div>
+            <div style="width:1rem;height:1rem;background-color:yellow;position: absolute;right:1rem;top:2rem;" class="girl" @touchend.once="p1BtnChoseSex(1)"></div>
+        </div>
+    </transition>
+
+    <!--WEBGL-->
+    <transition enter-active-class="ani-fadeIn" leave-active-class="ani-fadeOut">
+        <div class="container P_webgl" v-show="pwebgl.visible" style="display:none;">
+            <div class="scene-bg">
+                <img src="assets/images/stage1/scenebg0.jpg" class="scene-bg0">
+            </div>
+            <div id="WebGL" class="gl-container">
+                <div id="FPS"></div>
+            </div>
+            <div id="gl-touch" style="width:100%;height:100%;position:absolute;z-index:8;"></div>
+            <div id="gui" style="position: absolute;z-index:10;right:0"></div>
+        </div>
+    </transition>
+
+    <div class="hp" v-show="hpwarn.visible" style="display:none;">
+        <div class="hp_box">
+            <img src="assets/images/phone.png" class="phone">
+            <img src="assets/images/weile.png" class="hp_tip">
+        </div>
+    </div>
+
+    <div class="sp container" style="display:none;">
+        <img src="assets/images/hp_ts.png" class="sp-pic">
+    </div>
+
+    <div class="container P_wait" v-show="pwait.visible" style="display:none;">
+        <div class="preloader-indicator-modal">
+            <span class="preloader preloader-white"></span>
+        </div>
+    </div>
+</div>
+
+<!--<audio id="bgm" src="music/music.mp3?v1" preload="auto" loop="true" class="iosPreload"></audio>-->
+
+<input type="hidden" id="is_end" value="0" /><!--活动是否结束-->
+
+<script src="js/jquery-3.2.1.min.js"></script>
+<script src="js/vue.js"></script>
+<script src="js/three.js"></script>
+<script src="js/OrbitControls.js"></script>
+<!--<script src="js/DeviceOrientationControls.js"></script>-->
+<!--<script src="js/MTLLoader.js"></script>-->
+<script src="js/inflate.min.js"></script>
+<script src="js/FBXLoader.js"></script>
+<script src="js/OBJLoader.js"></script>
+<script src="js/DDSLoader.js"></script>
+<script src="js/TweenMax.js"></script>
+<script src="js/Detector.js"></script>
+<script src="js/stats.min.js"></script>
+<script src="js/dat.gui.min.js"></script>
+<!--<script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>-->
+<script>
+    var js;
+    js = '<' + 'script ' + 'src=' + "js/index.js?v" + Math.random() + '>' + '</' + 'script' + '>'
+    document.write(js)
+</script>
+
+
+</body>
+</html>
