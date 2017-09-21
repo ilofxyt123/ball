@@ -38,7 +38,7 @@ img{position: absolute;}
         position:absolute;
         top:70%;
     }
-
+.pressDown{transform:translateY(0.05rem)}
 .sp{
     z-index: 999;
     background-color:rgb(0,0,0)
@@ -66,6 +66,12 @@ img{position: absolute;}
         .scene-bg{width:100%;height:100%;position:absolute;left:0;top:0;}
             .scene-bg0{width:100%;}
         .gl-container{width:100%;height:100%;position: absolute;}
+        .tip-mask{}
+        .arrow-box{width:6rem;height:1.7rem;background-color:rgba(0,0,0,0.8);position: absolute;top:2.5rem;left:50%;margin-left:-3rem;z-index:10;}
+            .arrow-box .btn{width:1.2rem;}
+            .arrow-box .btn1{left:0;}
+            .arrow-box .btn2{right:0}
+
 
     .P_fill{}
         .pfill-title{width:4.02rem;top:1.56rem;left:50%;margin-left:-2.01rem;}

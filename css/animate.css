@@ -223,3 +223,81 @@
     -webkit-animation:ani-bgmRotate 1s linear 0s infinite forwards;
     animation:ani-bgmRotate 1s linear 0s infinite forwards;
 }
+
+@keyframes ani-loading-fish {
+    0%{
+        background-position:0 0;
+    }
+    100%{
+        background-position:-19.2rem 0;
+    }
+}
+
+@-webkit-keyframes ani-loading-fish {
+    0%{
+        background-position:0 0;
+    }
+    100%{
+        background-position:-19.2rem 0;
+    }
+}
+
+.ani-loading-fish{
+    -webkit-animation-name:ani-loading-fish;
+    -webkit-animation-duration: 1s;
+    /*-webkit-animation-timing-function: linear;*/
+    -webkit-animation-timing-function: steps(3,end);
+    /*-webkit-animation-delay: 2s;*/
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-direction: normal;
+    -webkit-animation-play-state: running;
+
+    animation-name:ani-loading-fish;
+    animation-duration: 1s;
+    /*animation-timing-function: linear;*/
+    animation-timing-function: steps(3,end);
+    /*animation-delay: 2s;*/
+    animation-iteration-count: infinite;
+    animation-direction: normal;
+    animation-play-state: running;
+    /* Safari and Chrome: */
+}
+
+@keyframes ani-p1-fish {
+    0%{
+        background-position:0 0;
+    }
+    100%{
+        background-position:-16.14rem 0;
+    }
+}
+
+@-webkit-keyframes ani-p1-fish {
+    0%{
+        background-position:0 0;
+    }
+    100%{
+        background-position:-16.14rem 0;
+    }
+}
+
+.ani-p1-fish{
+    -webkit-animation-name:ani-p1-fish;
+    -webkit-animation-duration: 0.8s;
+    /*-webkit-animation-timing-function: linear;*/
+    -webkit-animation-timing-function: steps(3,end);
+    /*-webkit-animation-delay: 2s;*/
+    -webkit-animation-iteration-count: infinite;
+    -webkit-animation-direction: normal;
+    -webkit-animation-play-state: running;
+
+    animation-name:ani-p1-fish;
+    animation-duration: 0.8s;
+    /*animation-timing-function: linear;*/
+    animation-timing-function: steps(3,end);
+    /*animation-delay: 2s;*/
+    animation-iteration-count: infinite;
+    animation-direction: normal;
+    animation-play-state: running;
+    /* Safari and Chrome: */
+}
