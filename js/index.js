@@ -2187,12 +2187,12 @@ webgl.loadCallback = function(){
 
     //debug
     if( this.debug ){
-        // initOrbit.call( this );//控制器
+        initOrbit.call( this );//控制器
         initGui.call( this );//调试面板
-        // initAxisHelper();//坐标轴辅助线
+        initAxisHelper();//坐标轴辅助线
         initFps.call( this );//fps
-        // CurveTest.call( this )//测试曲线
-        // createPlaneFloor( stageOption )
+        CurveTest.call( this )//测试曲线
+        createPlaneFloor( stageOption )
     }
 
     //debug
@@ -2422,7 +2422,7 @@ webgl.loadCallback = function(){
                 });
                 mesh = new THREE.Mesh( g, material )
                 mesh.rotation.set( -Math.PI / 2, 0, 0 )
-                mesh.position.set( 0, 5, -i * segment_depth-segment_depth/2 )
+                mesh.position.set( 0, 0, -i * segment_depth-segment_depth/2 )
                 road.add( mesh )
 
             }
@@ -3444,10 +3444,10 @@ var main = new function(){
     this.ImageResult1 = {};
 
     this.ImageList2 = [
-        {
-            url:this.picUrl+"ball.png",
-            group:"ball"
-        },
+        // {
+        //     url:this.picUrl+"ball.png",
+        //     group:"ball"
+        // },
         // {
         //     url:this.picUrl+"boy.jpg",
         //     group:"boy"
