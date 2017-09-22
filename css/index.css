@@ -61,7 +61,7 @@ img{position: absolute;}
 
 #iCreative{width:100%;height:100%;position: relative;}
     .P_bg{}
-        .bg-pic{width:6.4rem;}
+        .bg-pic{width:100%;}
     .P_webgl{}
         .scene-bg{width:100%;height:100%;position:absolute;left:0;top:0;}
             .scene-bg0{width:100%;}

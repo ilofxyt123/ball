@@ -419,37 +419,22 @@ var options = {
         top:{
             visible:false,
         },
-        pwebgl:{
-            visible:false,
-        },
         p1:{
             visible:false,
         },
         p2:{
             visible:false,
         },
-        pprize:{
+        pwebgl:{
             visible:false,
         },
-        pfill:{
+        presult:{
             visible:false,
         },
-        paddress:{
-            visible:false,
-        },
-        pvideo:{
-            visible:false,
-        },
-        pend:{
+        pboard:{
             visible:false,
         },
         pshare:{
-            visible:false,
-        },
-        pquery:{
-            visible:false,
-        },
-        pguanzhu:{
             visible:false,
         },
         prule:{
@@ -472,7 +457,7 @@ var options = {
                 reg:"为了确保星球领奖者的真实性,<br>系统需要进行实名认证,<br>请填写个人真实信息领取奖品!"
             }
         },
-        isResult:false,
+
         hpwarn:{
             visible:false,
         },
@@ -480,11 +465,17 @@ var options = {
             visible:false,
         },
         /*页面切换控制*/
+
+        userData : {
+            sex:0,//0代表女玩家
+            chose:[],//岔路口选择
+            time:0,//总时间
+        }
     },
     methods:{
         /*顶部*/
         top_btn_reason:function(){
-            console.log("查看焦虑原因")
+            this.pboard.visible = true;
         },
         top_btn_music:function(){
             console.log("音乐")
@@ -505,7 +496,7 @@ var options = {
         p1BtnChoseSex:function( sex, event ){
             $( event.target ).removeClass("pressDown")
 
-            webgl.userData.sex = sex;
+            this.userData.sex = sex;
             this.top.visible = false;
             this.p2.visible = false;
 
@@ -525,9 +516,10 @@ var options = {
         },
         webgl_btn_chose:function( dir ){
             $(".arrow-box").fo()
+            var _vm = this;
             var _this = webgl;
             if( dir == "left" ){
-                _this.userData.chose.push( 0 )
+                _vm.userData.chose.push( 0 )
                 _this.curveType = "left";
                 _this.updateCurvesData( 49, _this.mapData.curveR );//生成下一个stage岔路口的曲线数据
 
@@ -551,11 +543,11 @@ var options = {
                     TweenMax.to(obj,1,{speedZ:obj.startSpeedZ,onComplete:function(){
                         _this.gravity.allow = true;
                         var preRoad = _this.mapData[_this.mapData.preStage].roadFBXGroup
-                        three.scene.remove( preRoad )
+                        // three.scene.remove( preRoad )
                     }})
                 } );
             }else if( dir == "right"){
-                _this.userData.chose.push( 1 )
+                _vm.userData.chose.push( 1 )
                 _this.curveType = "right";
                 _this.updateCurvesData( 49, _this.mapData.curveR );//生成下一个stage岔路口的曲线数据
 
@@ -579,7 +571,7 @@ var options = {
                     TweenMax.to(obj,1,{speedZ:obj.startSpeedZ,onComplete:function(){
                         _this.gravity.allow = true;
                         var preRoad = _this.mapData[_this.mapData.preStage].roadFBXGroup
-                        three.scene.remove( preRoad )
+                        // three.scene.remove( preRoad )
                     }})
                 } );
             }
@@ -604,94 +596,17 @@ var options = {
             main.scroll.update();
         },
 
-        /*webgl*/
-        onPwebglEnter:function(){
-            main.initLX({
-                container:$(".P_webgl"),
-                delay:3000
-            });
-            main.initLX({
-                container:$("#bg .bg2"),
-                delay:1500
-            })
-            if(vm.key_index==3&&vm.server_data.prizeType==0&&!vm.server_data.is_end){
-                $(".tip-all").show();
-                $(".big-icon").show();
-                $(".number").hide();
-                $(".animation-box").fi();
-            }
+        /*presult*/
+        presult_btn_again:function(){
+            console.log("不服来战")
         },
-        pwegbl_btn_chaxun:function(){
-            this.pquery.visible = true;
-        },
-        pwebgl_btn_getPrize:function(){
-            //关注
-            if(!this.server_data.have_guanzhu){
-                this.pguanzhu.visible = true;
-                this.pwebgl.visible = false;
-                main.stopRender();
-                return;
-            }
-            //vip
-            if(!this.server_data.isVip){
-                var type = vm.palert.choice.reg;
-                var content = vm.palert.txt[type];
-                vm.openAlert( type, content );
-                return;
-            }
-
-            if(this.server_data.is_end){
-                this.palert.type = this.palert.choice.normal;
-                this.palert.content = "本次活动已结束<br>期待EP雅莹更多活动<br>记得关注“EP雅莹官方微信”<br>敬请期待我们的下次活动";
-                this.palert.visible = true;
-                $(".animation-box").fo();
-                return;
-            }
-
-            var _vm = this;
-            var callback = function( data ){
-                if( data.status ){
-                    _vm.server_data.prizeType = data.lottery_result;
-                    _vm.pprize.visible = true;
-                    _vm.pwebgl.visible = false;
-                    setTimeout(function(){
-                        $(".animation-box").hide();
-                    },1000)
-                    main.stopRender();
-                }else{
-                    console.log( "抽奖后台出问题了"+data )
-                }
-            };
-            _getData.getPrize( callback );
-        },
-        pwebgl_btn_icon4:function(){
-            var content = "活动结束，该奖品已过期<br>下次请尽早哦！"
-            this.openAlert("normal",content);
+        presult_btn_share:function(){
+            this.pshare.visible = true
         },
 
-        /*中奖结果页*/
-        afterEnterPprize:function(){
-            this.isResult = true;
-            init_weixin_share();
-        },
-        afterLeavePprize:function(){
-            this.isResult = false;
-            init_weixin_share()
-        },
-        pprize_btn_paddress:function(){
-            this.paddress.visible = true;
-        },/*中奖结果页*/
-        pprize_btn_share:function(){
-            this.pshare.visible = true;
-        },
-        pprize_btn_pfill:function(){
-            this.pfill.visible = true;
-            this.pprize.visible = false;
-        },
-        pprize_btn_close:function(){
-            main.startRender();
-            this.pprize.visible = false;
-            this.pwebgl.visible = true;
+        /*焦虑原因*/
+        pboard_btn_close:function(){
+            this.pboard.visible = false;
         },
         /*中奖查询页*/
         pquery_btn_paddress:function(){
@@ -850,7 +765,7 @@ three.init = function(){
     this.height = window.innerHeight;
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(45,this.width/this.height,0.1,1500);
-    this.camera.position.set( 0,25,0 )
+    this.camera.position.set( 0,20,0 )
     // this.camera.rotateX( -Math.PI / 18 )
 
     this.ocamera = new THREE.OrthographicCamera(-this.width/2,this.width/2,this.height/2,-this.height/2,1,200);
@@ -1338,7 +1253,7 @@ var webgl = new function(){
         },
         branch:{
             name:"branch",
-            url:this.modelsUrl+"branch.fbx",
+            url:this.modelsUrl+"branch2.fbx",
             position:new THREE.Vector3(),
             obj:undefined,
         }
@@ -1446,50 +1361,52 @@ var webgl = new function(){
                 },
                 left_grass:{
                     name:"1",
-                    position:new THREE.Vector3(-60,10,-100),
-                    scale:new THREE.Vector3(383,214,1),
+                    position:new THREE.Vector3(-40,3,-100),
+                    scale:new THREE.Vector3(532,309,1),
+                    multiply:0.1,
                     texture:undefined,
                 },
                 left_build1:{
                     name:"3",
-                    position:new THREE.Vector3(-50,10,-250),
+                    position:new THREE.Vector3(-40,15,-150),
                     scale:new THREE.Vector3(276,400,1),
                     texture:undefined
                 },
                 left_build2:{
                     name:"5",
-                    position:new THREE.Vector3(-50, 10,-350),
+                    position:new THREE.Vector3(-40, 15,-200),
                     scale:new THREE.Vector3(240,425,1),
                     texture:undefined
                 },
                 left_build3:{
                     name:"7",
-                    position:new THREE.Vector3(-50,10,-450),
+                    position:new THREE.Vector3(-40,15,-250),
                     scale:new THREE.Vector3(255,227,1),
                     texture:undefined
                 },
                 left_build4:{
                     name:"8",
-                    position:new THREE.Vector3(-50,10,-550),
+                    position:new THREE.Vector3(-40,15,-300),
                     scale:new THREE.Vector3(137,421,1),
                     texture:undefined
                 },
 
                 right_grass:{
                     name:"2",
-                    position:new THREE.Vector3(50, 10,-100),
-                    scale:new THREE.Vector3(440,260,1),
+                    position:new THREE.Vector3(50, 3,-350),
+                    scale:new THREE.Vector3(598,378,1),
+                    multiply:0.1,
                     texture:undefined
                 },
                 right_build1:{
                     name:"6",
-                    position:new THREE.Vector3(50, 10,-300),
+                    position:new THREE.Vector3(40, 15,-400),
                     scale:new THREE.Vector3(205,423,1),
                     texture:undefined
                 },
                 right_build2:{
                     name:"4",
-                    position:new THREE.Vector3(100,10,-300),
+                    position:new THREE.Vector3(70,15,-400),
                     scale:new THREE.Vector3(391,322,1),
                     texture:undefined
                 },
@@ -1556,7 +1473,7 @@ var webgl = new function(){
                 right_tree1:{
                     name:"7",
                     position:new THREE.Vector3(100,10,-200),
-                    scale:new THREE.Vector3(567,474,1),
+                    scale:new THREE.Vector3(825,612,1),
                     texture:undefined
                 },
 
@@ -1568,7 +1485,7 @@ var webgl = new function(){
             width:40,
             offset:new THREE.Vector3(),//起点的全局偏移
             start:new THREE.Vector3(0,0,0),//起点
-            end:new THREE.Vector3(0,0,-800),//内部终点
+            end:new THREE.Vector3(0,0,-810),//内部终点
             g_end:new THREE.Vector3(),//全局end
             distance:new THREE.Vector3(0, 0, -600),
             g_distance:new THREE.Vector3(0,0,0),
@@ -1586,7 +1503,13 @@ var webgl = new function(){
                 left_grass:{
                     name:"1",
                     position:new THREE.Vector3(-60,10,-100),
-                    scale:new THREE.Vector3(381,291,1),
+                    scale:new THREE.Vector3(465,249,1),
+                    texture:undefined,
+                },
+                left_stone:{
+                    name:"11",
+                    position:new THREE.Vector3(-60,10,-102),
+                    scale:new THREE.Vector3(462,248,1),
                     texture:undefined,
                 },
                 left_people:{
@@ -1687,7 +1610,7 @@ var webgl = new function(){
             width:40,
             offset:new THREE.Vector3(),//起点的全局偏移
             start:new THREE.Vector3(),//起点
-            end:new THREE.Vector3(0,0,-800),//内部终点
+            end:new THREE.Vector3(0,0,-810),//内部终点
             g_end:new THREE.Vector3(),//全局end
             distance:new THREE.Vector3(0, 0, -600),
             g_distance:new THREE.Vector3(0,0,0),
@@ -1789,7 +1712,7 @@ var webgl = new function(){
             width:40,
             offset:new THREE.Vector3(),//起点的全局偏移
             start:new THREE.Vector3(),//起点
-            end:new THREE.Vector3(0,0,-800),//内部终点
+            end:new THREE.Vector3(0,0,-810),//内部终点
             g_end:new THREE.Vector3(),//全局end
             distance:new THREE.Vector3(0, 0, -600),
             g_distance:new THREE.Vector3(0,0,0),
@@ -1884,9 +1807,12 @@ var webgl = new function(){
         left:0,
         right:1,
         cross:2,
-        curveR:184,
+        curveR:186,
         stoneTexture:undefined,
     }
+
+    //cacheData
+
 
     //曲线
     this.curvesData = {
@@ -1925,22 +1851,19 @@ var webgl = new function(){
         deltaLon:0,
     }
 
-    this.userData = {
-        sex:0,//0代表女玩家
-        chose:[],//岔路口选择
-        time:0,//总时间
-    }
-
 };
 webgl.init = function(){
     this.loader.total = Object.keys(this.OBJData).length;
 
     var _this = this;
     var t = new THREE.TextureLoader().load( main.picUrl+"pf.jpg" )
+    t.wrapT = t.wrapS = THREE.RepeatWrapping
     t.needsUpdate = true
     var material = new THREE.MeshLambertMaterial({
         map:t,
         // wireframe:true
+        // depthWrite:false
+        // depthTest:false,
     })
     for( var prop in this.FBXData ){
         loadFBX( _this.FBXData[ prop ] )
@@ -1969,7 +1892,7 @@ webgl.init = function(){
                             object.material = material
                         }
                     } )
-                    group.scale.multiplyScalar( 16 )
+                    group.scale.multiplyScalar( 16.5 )
                     option.obj[ _this.mapData.left ] = group.clone().rotateY( -Math.PI/2 );
                     option.obj[ _this.mapData.left ].position.add( new THREE.Vector3( 54, 0, -184) )
                     option.obj[ _this.mapData.right ] = group.clone()
@@ -1979,7 +1902,7 @@ webgl.init = function(){
                     group.scale.multiplyScalar( 16 )
                     option.obj = group;
                     group.position.y = -5
-                    group.children[14].material = material
+                    group.children[1].material = material
                     break;
             }
 
@@ -2078,7 +2001,6 @@ webgl.loadCallback = function(){
 
     initAmbientLight()//环境光
     _this.createNextRoadWithFBX()//道路
-    initBuild()//建筑
     initGravity.call( this )//重力
 
 
@@ -2089,9 +2011,6 @@ webgl.loadCallback = function(){
             intensity:1,
         });//可被移除的对象
         three.scene.add(ambientLight);
-    }
-    function initBuild(){
-
     }
     function initGravity(){
         var scope = this;
@@ -2187,7 +2106,7 @@ webgl.loadCallback = function(){
 
     //debug
     if( this.debug ){
-        initOrbit.call( this );//控制器
+        // initOrbit.call( this );//控制器
         initGui.call( this );//调试面板
         initAxisHelper();//坐标轴辅助线
         initFps.call( this );//fps
@@ -2217,6 +2136,7 @@ webgl.loadCallback = function(){
             };
             this.左拐 = function(){
                 _this.curveType = "left";
+                vm.userData.chose.push( 0 )
                 _this.updateCurvesData( 49, _this.mapData.curveR );//生成下一个stage岔路口的曲线数据
 
                 //得到下一个stage
@@ -2246,6 +2166,7 @@ webgl.loadCallback = function(){
             };
             this.右拐 = function(){
                 _this.curveType = "right";
+                vm.userData.chose.push( 1 )
                 _this.updateCurvesData( 49, _this.mapData.curveR );//生成下一个stage岔路口的曲线数据
 
                 //得到下一个stage
@@ -2488,7 +2409,7 @@ webgl.initBall = function(){
         Hs:16
     });
 
-    var t = option.texture[ this.userData.sex ]
+    var t = option.texture[ vm.userData.sex ]
     var m = new THREE.MeshPhongMaterial({map:t,transparent:true})
     var mesh = new THREE.Mesh( g, m )
 
@@ -2562,9 +2483,6 @@ webgl.createNextRoadWithFBX = function(){
     }
 
     //弯道视图更新
-    if( stageOption.dir == undefined ){
-
-    }
     var number = stageOption.depth / _this.FBXData['bridge'].depth
 
     var group = new THREE.Group();
@@ -2576,7 +2494,8 @@ webgl.createNextRoadWithFBX = function(){
         group.add( model )
     }
 
-    if( order < 5 ){
+    //左右岔路
+    if( order < 4 ){
         // 左岔路
         // var left_fbx = _this.FBXData['curve'].obj[0].clone();
         // var offset_inner = new THREE.Vector3().copy( stageOption.end )
@@ -2592,14 +2511,14 @@ webgl.createNextRoadWithFBX = function(){
         // group.position.add( stageOption.offset )
 
         var branchFBX = _this.FBXData['branch'].obj.clone();
-        var offset_inner = new THREE.Vector3().copy( stageOption.end )
+        var offset_inner = new THREE.Vector3().addVectors( stageOption.end, new THREE.Vector3(0,0,0.5))
         branchFBX.position.add( offset_inner )
         group.add( branchFBX )
 
-        group.position.add( stageOption.offset )
     }
 
-
+    //道路偏移
+    group.position.add( stageOption.offset )
 
 
     //加入房子
@@ -2612,7 +2531,7 @@ webgl.createNextRoadWithFBX = function(){
             right_fbx = _this.FBXData['curve'].obj[1].clone()
             // right_fbx.rotateZ( -Math.PI )
             right_fbx.rotateY( Math.PI / 2 )
-            right_fbx.position.add( new THREE.Vector3(_this.mapData.curveR,0,_this.mapData.curveR) )
+            right_fbx.position.add( new THREE.Vector3(_this.mapData.curveR+4,0,_this.mapData.curveR) )
             group.add( right_fbx )
         }else if( direction == "right" ){
             right_fbx = _this.FBXData['curve'].obj[1].clone()
@@ -2641,7 +2560,12 @@ webgl.createNextRoadWithFBX = function(){
                 // data[ name ].scale.multiplyScalar( 0.1 )
 
             }else{
-                scale = new THREE.Vector3().copy( data[ name ].scale ).multiplyScalar( 0.15 )
+                if( data[ name ].multiply ){
+                    scale = new THREE.Vector3().copy( data[ name ].scale ).multiplyScalar( data[ name ].multiply )
+                }else{
+                    scale = new THREE.Vector3().copy( data[ name ].scale ).multiplyScalar( 0.1 )
+                }
+
                 // data[ name ].scale.multiplyScalar( 0.2 )
             }
 
@@ -2654,7 +2578,7 @@ webgl.createNextRoadWithFBX = function(){
                 map : t,
                 transparent : true,
                 side : THREE.DoubleSide,
-                depthWrite:false,
+                // depthWrite:false,
             } )
             var mesh = new THREE.Mesh( g, m )
             mesh.position.copy( data[ name ].position )
@@ -3344,8 +3268,8 @@ webgl.render = function(){
                 this.setCameraFollowBall()
                 break;
             case "end":
-                console.log("到终点了")
                 main.stopRender()
+                main.gameEnd()
                 break;
         }
     }
@@ -3359,6 +3283,10 @@ webgl.render = function(){
 
 var main = new function(){
 
+    //程序已经开始
+    this.isStart = false
+    //查看过结果页
+    this.haveGetResult = false
     this.touch ={
         ScrollObj:undefined,
         isScroll:false,
@@ -3609,6 +3537,12 @@ var main = new function(){
             direction:"left",
         },
         {
+            url:this.picUrl+"stage2/p4_img_1_1.png",
+            group:"stage2",
+            name:"left_stone",
+            direction:"left",
+        },
+        {
             url:this.picUrl+"stage2/p4_img_2.png",
             group:"stage2",
             name:"right_grass",
@@ -3850,9 +3784,6 @@ var main = new function(){
 
     this.RAF = undefined;
 
-
-
-
 };
 /***********************流程***********************/
 main.init=function(){
@@ -3899,7 +3830,11 @@ main.start=function(){
                     var g = percent % 10
                     if( s != 10 ){
                         $s.html( result.number[ s ] )
-                        $g.html( result.number[ g ] )
+                        if( g == s ){
+                            $g.html( $(result.number[ g ]).clone() )
+                        }else{
+                            $g.html( result.number[ g ] )
+                        }
                     }else{
                         $b.html( result.number[ 1 ] )
                         $s.html( result.number[ 0 ] )
@@ -3964,8 +3899,24 @@ main.loadCallBack = function(){
     }, 1000)
 
 
+    // $(".P_loading").fo()
+    //
+    // $(".reason-btn").show()
+    // $(".rule-btn").hide()
+    // vm.top.visible = true;
+    // vm.presult.visible = true
+
 
 };
+main.gameEnd = function(){
+    window.removeEventListener( "orientationchange", onOrientChange2 )
+    window.addEventListener( "orientationchange", onOrientChange3 )
+
+    $(".reason-btn").show()
+    $(".rule-btn").hide()
+
+
+}
 main.prule = function(){
     $(".P_rule").fi();
     main.scrollInit(".rule-txt",0)
@@ -4024,37 +3975,47 @@ main.addEvent=function(){
         e.preventDefault();
     }
 
-    window.addEventListener( "orientationchange", onOrientChange1 );
-    setTimeout(function(){
-        onOrientChange1();
-    },500)
-
-
     $(window).resize(function(){
         three.onresize();
+        console.log( three.width )
     })
+
 };
 /***********************功能***********************/
 
+//要求竖屏进页面
 function onOrientChange1 ( e ){
 
         if( window.orientation == 0 || window.orientation == 180 ) {
 
+            if( !main.isStart ){
+                main.addEvent();
+                main.init();
+                main.start();
+                main.isStart = true
+            }
+            $(".hp").hide()
             vm.hpwarn.visible = false;
 
         }
 
         else if(window.orientation == 90 || window.orientation == -90) {
 
+            $(".hp").show()
             vm.hpwarn.visible = true;
 
         }
 
 }
+
+//要求横屏操作小球
 function onOrientChange2 ( e ){
 
     if( vm.hpwarn.visible == true ){
+
+        $(".hp").show()
         vm.hpwarn.visible = false;
+
     }
 
     setTimeout(function(){
@@ -4062,7 +4023,7 @@ function onOrientChange2 ( e ){
         //竖屏
         if( window.orientation == 0 || window.orientation == 180 ){
 
-            $(".sp").fi();
+            $(".sp").show();
             webgl.gravity.orient = 0;
 
         }
@@ -4071,7 +4032,7 @@ function onOrientChange2 ( e ){
         else if( window.orientation == 90 || window.orientation == -90 ){
 
             // window.removeEventListener( "orientationchange", onOrientChange2 )
-            $(".sp").fo();
+            $(".sp").hide();
             webgl.gravity.orient = window.orientation / 90
 
         }
@@ -4079,10 +4040,42 @@ function onOrientChange2 ( e ){
     },0)
 
 };
+
+//要求竖屏查看结果
+function onOrientChange3(){
+
+    if( window.orientation == 0 || window.orientation == 180 ) {
+
+        if( !main.haveGetResult ){
+            vm.pwebgl.visible = false;
+            vm.presult.visible = true;
+            main.haveGetResult = true
+        }
+        $(".hp").hide()
+        vm.hpwarn.visible = false;
+
+    }
+
+    else if(window.orientation == 90 || window.orientation == -90) {
+
+        $(".hp").show()
+        vm.hpwarn.visible = true;
+
+    }
+}
 $(function(){
-    main.addEvent();
-    main.init();
-    main.start();
+    window.addEventListener( "orientationchange", onOrientChange1 );
+    if( window.orientation == 0 ){
+
+        main.addEvent();
+        main.init();
+        main.start();
+        main.isStart = true
+
+    }else{
+        $(".hp").show()
+        vm.hpwarn.visible = true;
+    }
 })
 
 
