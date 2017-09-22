@@ -518,6 +518,7 @@ var options = {
             $(".arrow-box").fo()
             var _vm = this;
             var _this = webgl;
+
             if( dir == "left" ){
                 _vm.userData.chose.push( 0 )
                 _this.curveType = "left";
@@ -525,9 +526,11 @@ var options = {
 
                 //得到下一个stage
                 _this.updateNextMapInfo();
-
+                _this.mapData[ _this.mapData.stage ].roadFBXGroup = _this.cacheData[ _this.mapData.stage ][ dir ]
                 //下一个stage的道路模型生成
-                _this.createNextRoadWithFBX()
+                // _this.createNextRoadWithFBX()
+
+                _this.putRoadOnRightPosition()
 
                 _this.gravity.allow = false;
                 _this.gameState = _this.state["runCurve"]
@@ -543,7 +546,7 @@ var options = {
                     TweenMax.to(obj,1,{speedZ:obj.startSpeedZ,onComplete:function(){
                         _this.gravity.allow = true;
                         var preRoad = _this.mapData[_this.mapData.preStage].roadFBXGroup
-                        // three.scene.remove( preRoad )
+                        three.scene.remove( preRoad )
                     }})
                 } );
             }else if( dir == "right"){
@@ -553,9 +556,10 @@ var options = {
 
                 //得到下一个stage
                 _this.updateNextMapInfo();
-
+                _this.mapData[ _this.mapData.stage ].roadFBXGroup = _this.cacheData[ _this.mapData.stage ][ dir ]
                 //下一个stage的道路模型生成
-                _this.createNextRoadWithFBX()
+                // _this.createNextRoadWithFBX()
+                _this.putRoadOnRightPosition()
 
                 _this.gravity.allow = false;
                 _this.gameState = _this.state["runCurve"]
@@ -571,7 +575,7 @@ var options = {
                     TweenMax.to(obj,1,{speedZ:obj.startSpeedZ,onComplete:function(){
                         _this.gravity.allow = true;
                         var preRoad = _this.mapData[_this.mapData.preStage].roadFBXGroup
-                        // three.scene.remove( preRoad )
+                        three.scene.remove( preRoad )
                     }})
                 } );
             }
@@ -1326,6 +1330,7 @@ var webgl = new function(){
     //mapInfo
     this.mapData = {
         stage0:{
+            index:0,
             depth:405,
             segments:5,
             width:40,
@@ -1339,6 +1344,7 @@ var webgl = new function(){
             roadFBXGroup:undefined,
         },
         stage1:{
+            index:1,
             depth:810,
             segments:10,
             width:40,
@@ -1480,6 +1486,7 @@ var webgl = new function(){
             }
         },
         stage2:{
+            index:2,
             depth:810,
             segments:10,
             width:40,
@@ -1605,6 +1612,7 @@ var webgl = new function(){
             }//right
         },
         stage3:{
+            index:3,
             depth:810,
             segments:10,
             width:40,
@@ -1707,6 +1715,7 @@ var webgl = new function(){
             }//right
         },
         stage4:{
+            index:4,
             depth:810,
             segments:10,
             width:40,
@@ -1812,7 +1821,24 @@ var webgl = new function(){
     }
 
     //cacheData
-
+    this.cacheData = {
+        stage1:{
+            left:undefined,
+            right:undefined
+        },
+        stage2:{
+            left:undefined,
+            right:undefined
+        },
+        stage3:{
+            left:undefined,
+            right:undefined
+        },
+        stage4:{
+            left:undefined,
+            right:undefined
+        }
+    }
 
     //曲线
     this.curvesData = {
@@ -2001,6 +2027,7 @@ webgl.loadCallback = function(){
 
     initAmbientLight()//环境光
     _this.createNextRoadWithFBX()//道路
+    _this.initCacheData();//生成所有地图数据,并隐藏
     initGravity.call( this )//重力
 
 
@@ -2353,19 +2380,105 @@ webgl.loadCallback = function(){
         }
     }
 };
-webgl.createStage = function(){
+webgl.initCacheData = function(){
+    var _this = this;
+    var cache = _this.cacheData;
+    for( var i = 1; i < 5; i ++ ){
+        var stage = "stage" + i;
+        var stageOption = _this.mapData[ stage ];
 
-    var stage = this.mapData.stage;
+        cache[ stage ].left = createFBXGroup( stageOption, 'left' )
+        cache[ stage ].right = createFBXGroup( stageOption, 'right' )
+    }
 
+    function createFBXGroup( option, dir ){
+        var group = new THREE.Group();
 
+        //bridge模型数量,生成直线
+        var number = option.depth / _this.FBXData['bridge'].depth
+        for( var i = 0; i < number; i ++ ){
+            var model = _this.FBXData['bridge'].obj.clone();
+            model.position.z = -i * _this.FBXData['bridge'].depth
+            group.add( model )
+        }
 
+        //生成岔路
+        if( option.index < 4 ){
 
+            var branchFBX = _this.FBXData['branch'].obj.clone();
+            var offset_inner = new THREE.Vector3().addVectors( option.end, new THREE.Vector3(0,0,0.5))
+            branchFBX.position.add( offset_inner )
+            group.add( branchFBX )
 
+        }
 
+        //加入房子
+        if( option.index != 0 ){//0场景不需要加建筑
+            var data = stageOption[ dir ]
 
-    this.mapData.nextStage = this.mapData.stage + 1;
-    this.mapData.preStage = this.mapData.stage - 1
-};
+            //补全道路尾部
+            if( dir == "left" ){
+                right_fbx = _this.FBXData['curve'].obj[1].clone()
+                // right_fbx.rotateZ( -Math.PI )
+                right_fbx.rotateY( Math.PI / 2 )
+                right_fbx.position.add( new THREE.Vector3(_this.mapData.curveR+4,0,_this.mapData.curveR) )
+                group.add( right_fbx )
+            }else if( dir == "right" ){
+                right_fbx = _this.FBXData['curve'].obj[1].clone()
+                right_fbx.rotateZ( Math.PI )
+                right_fbx.rotateX( Math.PI )
+                right_fbx.position.add( new THREE.Vector3(0,0,0) )
+                group.add( right_fbx )
+            }
+
+            //生成配置的建筑
+            for( var name in data ){
+                var t,isStone = false;
+                var scale,position
+                if( name == "stone" ){
+                    t = _this.mapData.stoneTexture
+                }else{
+                    t = data[ name ].texture;
+                }
+                // var m = new THREE.SpriteMaterial( { map:t } )
+                // var sprite = new THREE.Sprite( m )
+                // sprite.scale.copy( data[ name ].scale )
+                // group.add( sprite )
+                if( name == "stone" ){
+                    isStone = true
+                    scale = new THREE.Vector3().copy( data[ name ].scale ).multiplyScalar( 0.1 )
+                    // data[ name ].scale.multiplyScalar( 0.1 )
+
+                }else{
+                    if( data[ name ].multiply ){
+                        scale = new THREE.Vector3().copy( data[ name ].scale ).multiplyScalar( data[ name ].multiply )
+                    }else{
+                        scale = new THREE.Vector3().copy( data[ name ].scale ).multiplyScalar( 0.1 )
+                    }
+
+                    // data[ name ].scale.multiplyScalar( 0.2 )
+                }
+
+                var g = three.getPlaneGeo({
+                    width:scale.x,
+                    height:scale.y,
+
+                })
+                var m = new THREE.MeshBasicMaterial( {
+                    map : t,
+                    transparent : true,
+                    side : THREE.DoubleSide,
+                    // depthWrite:false,
+                } )
+                var mesh = new THREE.Mesh( g, m )
+                mesh.position.copy( data[ name ].position )
+                group.add( mesh )
+            }
+        }
+
+        return group;
+    }
+}
 
 //初始化用到的方法
 webgl.reset = function(){
@@ -2644,6 +2757,14 @@ webgl.createNextRoadWithFBX = function(){
     }
 
 }
+webgl.putRoadOnRightPosition = function(){
+    this.runData = this.curvesData[ this.curveType ]
+    var stage = this.mapData.stage
+    var stageOption = this.mapData[ stage ]
+
+    stageOption.roadFBXGroup.position.add( stageOption.offset )
+    three.scene.add( stageOption.roadFBXGroup )
+}
 webgl.updateCurvesData = function( divisions, R ){
 
     var _this = this;
@@ -2734,7 +2855,7 @@ webgl.updateNextMapInfo = function(){
     this.mapData[ nextStage ].g_end.addVectors( this.mapData[ nextStage ].end, global_offset )
 
     //update stone.g_position
-    this.mapData[ nextStage ][ type ].stone.g_position.addVectors( global_offset, this.mapData[ nextStage ][ type ].stone.position)
+    this.mapData[ nextStage ][ type ].stone.g_position.addVectors( global_offset, this.mapData[ nextStage ][ type ].stone.position )
 
 };
 
