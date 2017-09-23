@@ -470,7 +470,9 @@ var options = {
             sex:0,//0代表女玩家
             chose:[],//岔路口选择
             time:0,//总时间
-        }
+            stage:"stage0"//当前场景
+        },
+
     },
     methods:{
         /*顶部*/
@@ -2288,6 +2290,8 @@ webgl.loadCallback = function(){
     }
     function initFps(){
         this.fps = three.getFps();
+        this.fps.domElement.style.top =""
+        this.fps.domElement.style.bottom = "0"
         document.getElementById("FPS").appendChild(this.fps.domElement);
     }
     function CurveTest(){
@@ -2835,6 +2839,7 @@ webgl.updateNextMapInfo = function(){
 
     this.mapData.preStage = nowStage;
     this.mapData.stage = nextStage;
+    vm.userData.stage = nextStage
 
     var type = this.curveType;
     var offsetR;
@@ -3302,7 +3307,7 @@ webgl.render = function(){
                     this.gravity.allow = false
                     this.ballScrollTo(new THREE.Vector3().copy( this.mapData.stage0.g_end ), 3, function(){
                         _this.gameState = _this.state.waitChose;
-                        $(".arrow-box1").fi();
+                        $(".arrow-box").fi();
                     })
                     this.gameState = this.state.slowDown
                 }
@@ -3315,7 +3320,7 @@ webgl.render = function(){
                     this.gravity.allow = false
                     this.ballScrollTo(new THREE.Vector3().copy( this.mapData.stage1.g_end ), 3, function(){
                         _this.gameState = _this.state.waitChose
-                        $(".arrow-box2").fi();
+                        $(".arrow-box").fi();
                     })
                     this.gameState = this.state.slowDown
                 }
@@ -3334,7 +3339,7 @@ webgl.render = function(){
                     this.gravity.allow = false
                     this.ballScrollTo(new THREE.Vector3().copy( this.mapData.stage2.g_end ), 3, function(){
                         _this.gameState = _this.state.waitChose
-                        $(".arrow-box3").fi();
+                        $(".arrow-box").fi();
                     })
                     this.gameState = this.state.slowDown
                 }
@@ -3348,7 +3353,7 @@ webgl.render = function(){
                     this.gravity.allow = false
                     this.ballScrollTo(new THREE.Vector3().copy( this.mapData.stage3.g_end ), 3, function(){
                         _this.gameState = _this.state.waitChose
-                        $(".arrow-box4").fi();
+                        $(".arrow-box").fi();
                     })
                     this.gameState = this.state.slowDown
                 }
