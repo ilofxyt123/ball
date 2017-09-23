@@ -1830,7 +1830,8 @@ var webgl = new function(){
         },
         stage3:{
             haveShow:false,
-        }
+        },
+        $dom:$(".arrow-box")
     }
 
     //cacheData
@@ -2604,8 +2605,44 @@ webgl.getPointsFromCurve = function ( points, divisions, offset ) {
 
     return points;
 }//生成points数组
-webgl.getRoadData = function( start ){
+webgl.afterChose = function( dir ){
+    var _this = this
+    vm.userData.chose.push( dir )
+    if( dir == "left" ){
+        _this.curveType = "left";
+        //下一个stage的道路模型生成
+        // _this.createNextRoadWithFBX()
+    }else if( dir == "right"){
+        _this.curveType = "right";
+        //下一个stage的道路模型生成
+        // _this.createNextRoadWithFBX()
+    }
 
+    //生成下一个stage岔路口的曲线数据
+    _this.updateCurvesData( 49, _this.mapData.curveR );
+    //得到下一个stage
+    _this.updateNextMapInfo();
+
+    _this.mapData[ _this.mapData.stage ].roadFBXGroup = _this.cacheData[ _this.mapData.stage ][ dir ]
+    _this.putRoadOnRightPosition()
+
+    _this.gravity.allow = false;
+    _this.gameState = _this.state["runCurve"]
+
+    webgl.runCurve( function(){
+        three.camera.rotation.y = 0;
+        three.camera.rotation.x = 0
+        // _this.gameState = _this.state["waitChose"]
+        var stage = _this.mapData.stage
+        _this.gameState = _this.state[ stage ]
+
+        var obj = _this.ballOptions;
+        TweenMax.to(obj,1,{speedZ:obj.startSpeedZ,onComplete:function(){
+            _this.gravity.allow = true;
+            var preRoad = _this.mapData[_this.mapData.preStage].roadFBXGroup
+            three.scene.remove( preRoad )
+        }})
+    } );
 };
 webgl.createNextRoadWithFBX = function(){
     var _this = this;
@@ -2896,7 +2933,6 @@ webgl.showNPC = function(){
         this.npc.isShow = true
     }
 }
-
 webgl.hideNPC = function(){
     var _this = this;
     this.npc.$dom.removeClass("npc-show")
@@ -3345,27 +3381,68 @@ webgl.render = function(){
                 this.ballRender();
                 this.getViewSpeed()
                 this.setCameraFollowBall()
-                if( this.ballMesh.position.z <= this.mapData.stage0.g_distance.z ){
+                //出提示的点
+                if( (this.ballMesh.position.z > this.mapData.stage0.g_distance.z) &&(this.ballMesh.position.z + this.ballOptions.speedZ <= this.mapData.stage0.g_distance.z)){
                     // this.gravity.allow = false
                     // this.ballScrollTo(new THREE.Vector3().copy( this.mapData.stage0.g_end ), 3, function(){
                     //     _this.gameState = _this.state.waitChose;
                     //     $(".arrow-box").fi();
                     // })
                     // this.gameState = this.state.slowDown
+
+                    if( !this.branchSelector.stage0.haveShow ){
+                        this.branchSelector.$dom.fi()
+                        this.branchSelector.stage0.haveShow = true
+                    }
+                }
+                //拐弯点
+                else if( (this.ballMesh.position.z > this.mapData.stage0.g_end.z) && (this.ballMesh.position.z + this.ballOptions.speedZ <= this.mapData.stage0.g_end.z)){
+                    this.branchSelector.$dom.hide()
+                    //左拐
+                    if( this.ballMesh.position.x <= this.mapData.stage0.g_end.x ){
+                        var dir = 'left'
+                    }
+                    //右拐
+                    else{
+                        var dir = 'right'
+                    }
+                    this.afterChose( dir )
                 }
                 break;
             case "stage1":
                 this.ballRender();
                 this.getViewSpeed();
                 this.setCameraFollowBall();
-                if( this.ballMesh.position.z <= this.mapData.stage1.g_distance.z ){
-                    this.gravity.allow = false
-                    this.ballScrollTo(new THREE.Vector3().copy( this.mapData.stage1.g_end ), 3, function(){
-                        _this.gameState = _this.state.waitChose
-                        $(".arrow-box").fi();
-                    })
-                    this.gameState = this.state.slowDown
+                // if( this.ballMesh.position.z <= this.mapData.stage1.g_distance.z ){
+                //     this.gravity.allow = false
+                //     this.ballScrollTo(new THREE.Vector3().copy( this.mapData.stage1.g_end ), 3, function(){
+                //         _this.gameState = _this.state.waitChose
+                //         $(".arrow-box").fi();
+                //     })
+                //     this.gameState = this.state.slowDown
+                // }
+
+                //出提示的点
+                if( (this.ballMesh.position.z > this.mapData.stage1.g_distance.z) &&(this.ballMesh.position.z + this.ballOptions.speedZ <= this.mapData.stage1.g_distance.z)){
+                    if( !this.branchSelector.stage1.haveShow ){
+                        this.branchSelector.$dom.fi()
+                        this.branchSelector.stage1.haveShow = true
+                    }
                 }
+                //拐弯点
+                else if( (this.ballMesh.position.z > this.mapData.stage1.g_end.z) && (this.ballMesh.position.z + this.ballOptions.speedZ <= this.mapData.stage1.g_end.z)){
+                    this.branchSelector.$dom.hide()
+                    //左拐
+                    if( this.ballMesh.position.x <= this.mapData.stage1.g_end.x ){
+                        var dir = 'left'
+                    }
+                    //右拐
+                    else{
+                        var dir = 'right'
+                    }
+                    this.afterChose( dir )
+                }
+
                 this.testStone()
                 break;
             case "slowDown":
@@ -3377,28 +3454,72 @@ webgl.render = function(){
                 this.ballRender();
                 this.getViewSpeed();
                 this.setCameraFollowBall();
-                if( this.ballMesh.position.z <= this.mapData.stage2.g_distance.z ){
-                    this.gravity.allow = false
-                    this.ballScrollTo(new THREE.Vector3().copy( this.mapData.stage2.g_end ), 3, function(){
-                        _this.gameState = _this.state.waitChose
-                        $(".arrow-box").fi();
-                    })
-                    this.gameState = this.state.slowDown
+                // if( this.ballMesh.position.z <= this.mapData.stage2.g_distance.z ){
+                //     this.gravity.allow = false
+                //     this.ballScrollTo(new THREE.Vector3().copy( this.mapData.stage2.g_end ), 3, function(){
+                //         _this.gameState = _this.state.waitChose
+                //         $(".arrow-box").fi();
+                //     })
+                //     this.gameState = this.state.slowDown
+                // }
+
+                //出提示的点
+                if( (this.ballMesh.position.z > this.mapData.stage2.g_distance.z) &&(this.ballMesh.position.z + this.ballOptions.speedZ <= this.mapData.stage2.g_distance.z)){
+                    if( !this.branchSelector.stage2.haveShow ){
+                        this.branchSelector.$dom.fi()
+                        this.branchSelector.stage1.haveShow = true
+                    }
                 }
+                //拐弯点
+                else if( (this.ballMesh.position.z > this.mapData.stage2.g_end.z) && (this.ballMesh.position.z + this.ballOptions.speedZ <= this.mapData.stage2.g_end.z)){
+                    this.branchSelector.$dom.hide()
+                    //左拐
+                    if( this.ballMesh.position.x <= this.mapData.stage2.g_end.x ){
+                        var dir = 'left'
+                    }
+                    //右拐
+                    else{
+                        var dir = 'right'
+                    }
+                    this.afterChose( dir )
+                }
+
                 this.testStone()
                 break;
             case "stage3":
                 this.ballRender();
                 this.getViewSpeed();
                 this.setCameraFollowBall();
-                if( this.ballMesh.position.z <= this.mapData.stage3.g_distance.z ){
-                    this.gravity.allow = false
-                    this.ballScrollTo(new THREE.Vector3().copy( this.mapData.stage3.g_end ), 3, function(){
-                        _this.gameState = _this.state.waitChose
-                        $(".arrow-box").fi();
-                    })
-                    this.gameState = this.state.slowDown
+                // if( this.ballMesh.position.z <= this.mapData.stage3.g_distance.z ){
+                //     this.gravity.allow = false
+                //     this.ballScrollTo(new THREE.Vector3().copy( this.mapData.stage3.g_end ), 3, function(){
+                //         _this.gameState = _this.state.waitChose
+                //         $(".arrow-box").fi();
+                //     })
+                //     this.gameState = this.state.slowDown
+                // }
+
+                //出提示的点
+                if( (this.ballMesh.position.z > this.mapData.stage3.g_distance.z) &&(this.ballMesh.position.z + this.ballOptions.speedZ <= this.mapData.stage3.g_distance.z)){
+                    if( !this.branchSelector.stage3.haveShow ){
+                        this.branchSelector.$dom.fi()
+                        this.branchSelector.stage1.haveShow = true
+                    }
                 }
+                //拐弯点
+                else if( (this.ballMesh.position.z > this.mapData.stage3.g_end.z) && (this.ballMesh.position.z + this.ballOptions.speedZ <= this.mapData.stage3.g_end.z)){
+                    this.branchSelector.$dom.hide()
+                    //左拐
+                    if( this.ballMesh.position.x <= this.mapData.stage3.g_end.x ){
+                        var dir = 'left'
+                    }
+                    //右拐
+                    else{
+                        var dir = 'right'
+                    }
+                    this.afterChose( dir )
+                }
+
                 this.testStone()
                 break;
             case "stage4":
