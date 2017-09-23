@@ -304,6 +304,8 @@ Object.assign( Utils.ImageLoader.prototype,{
                 img["direction"] = urls[_this.haveload].direction
             }
 
+            console.log( urls[_this.haveload].url )
+
         }
 
         function start(){
@@ -514,73 +516,60 @@ var options = {
         /*webgl*/
         pwebgl_btn_closeTip:function(){
             $(".tip-mask").fo();
-            webgl.initBall();
+
+            var afterBallInit = function(){
+                webgl.start()
+
+                //左上角定时器启动
+                var second = 0;
+                webgl.timer.id = setInterval(function(){
+                    second ++;
+                    webgl.timer.dom1.html( second )
+                },1000)
+            }
+            webgl.initBall( afterBallInit );
         },
         webgl_btn_chose:function( dir ){
             $(".arrow-box").fo()
             var _vm = this;
             var _this = webgl;
-
+            this.userData.chose.push( dir )
             if( dir == "left" ){
-                _vm.userData.chose.push( 0 )
                 _this.curveType = "left";
-                _this.updateCurvesData( 49, _this.mapData.curveR );//生成下一个stage岔路口的曲线数据
-
-                //得到下一个stage
-                _this.updateNextMapInfo();
-                _this.mapData[ _this.mapData.stage ].roadFBXGroup = _this.cacheData[ _this.mapData.stage ][ dir ]
                 //下一个stage的道路模型生成
                 // _this.createNextRoadWithFBX()
-
-                _this.putRoadOnRightPosition()
-
-                _this.gravity.allow = false;
-                _this.gameState = _this.state["runCurve"]
-                _this.runCurve( function(){
-                    console.log("弯道结束")
-                    // _this.gameState = _this.state["waitChose"]
-                    three.camera.rotation.y = 0;
-                    three.camera.rotation.x = 0
-                    var stage = _this.mapData.stage
-                    _this.gameState = _this.state[ stage ]
-
-                    var obj = _this.ballOptions;
-                    TweenMax.to(obj,1,{speedZ:obj.startSpeedZ,onComplete:function(){
-                        _this.gravity.allow = true;
-                        var preRoad = _this.mapData[_this.mapData.preStage].roadFBXGroup
-                        three.scene.remove( preRoad )
-                    }})
-                } );
             }else if( dir == "right"){
-                _vm.userData.chose.push( 1 )
                 _this.curveType = "right";
-                _this.updateCurvesData( 49, _this.mapData.curveR );//生成下一个stage岔路口的曲线数据
-
-                //得到下一个stage
-                _this.updateNextMapInfo();
-                _this.mapData[ _this.mapData.stage ].roadFBXGroup = _this.cacheData[ _this.mapData.stage ][ dir ]
                 //下一个stage的道路模型生成
                 // _this.createNextRoadWithFBX()
-                _this.putRoadOnRightPosition()
-
-                _this.gravity.allow = false;
-                _this.gameState = _this.state["runCurve"]
-                webgl.runCurve( function(){
-                    console.log("弯道结束")
-                    three.camera.rotation.y = 0;
-                    three.camera.rotation.x = 0
-                    // _this.gameState = _this.state["waitChose"]
-                    var stage = _this.mapData.stage
-                    _this.gameState = _this.state[ stage ]
-
-                    var obj = _this.ballOptions;
-                    TweenMax.to(obj,1,{speedZ:obj.startSpeedZ,onComplete:function(){
-                        _this.gravity.allow = true;
-                        var preRoad = _this.mapData[_this.mapData.preStage].roadFBXGroup
-                        three.scene.remove( preRoad )
-                    }})
-                } );
             }
+
+            //生成下一个stage岔路口的曲线数据
+            _this.updateCurvesData( 49, _this.mapData.curveR );
+            //得到下一个stage
+            _this.updateNextMapInfo();
+
+            _this.mapData[ _this.mapData.stage ].roadFBXGroup = _this.cacheData[ _this.mapData.stage ][ dir ]
+            _this.putRoadOnRightPosition()
+
+            _this.gravity.allow = false;
+            _this.gameState = _this.state["runCurve"]
+
+            webgl.runCurve( function(){
+                three.camera.rotation.y = 0;
+                three.camera.rotation.x = 0
+                // _this.gameState = _this.state["waitChose"]
+                var stage = _this.mapData.stage
+                _this.gameState = _this.state[ stage ]
+
+                var obj = _this.ballOptions;
+                TweenMax.to(obj,1,{speedZ:obj.startSpeedZ,onComplete:function(){
+                    _this.gravity.allow = true;
+                    var preRoad = _this.mapData[_this.mapData.preStage].roadFBXGroup
+                    three.scene.remove( preRoad )
+                }})
+            } );
+
         },
         /*活动规则*/
         // top_btn_rule:function(){
@@ -1118,16 +1107,16 @@ three.onresize = function(){
     this.width = window.innerWidth;
     this.height = window.innerHeight;
 
-    this.camera.aspect = this.width/this.height;
+    this.camera.aspect = this.width / this.height;
     this.camera.updateProjectionMatrix();
+    //
+    // this.ocamera.left = -this.width/2;
+    // this.ocamera.right = this.width/2;
+    // this.ocamera.top = this.height/2;
+    // this.ocamera.bottom = -this.height/2;
+    // this.ocamera.updateProjectionMatrix();
 
-    this.ocamera.left = -this.width/2;
-    this.ocamera.right = this.width/2;
-    this.ocamera.top = this.height/2;
-    this.ocamera.bottom = -this.height/2;
-    this.ocamera.updateProjectionMatrix();
-
-    this.renderer.setSize(this.width,this.height);
+    this.renderer.setSize( this.width, this.height );
 };
 
 var curveTool = (function(){
@@ -1285,12 +1274,16 @@ var webgl = new function(){
 
     //时钟
     this.clock = new THREE.Clock();
+    this.timer = {
+        id:undefined,
+        dom1:$(".time-txt")
+    };//左上角计时器
     //road
     this.road = undefined;
     this.roadOptions = {
         depth:1000,
         segments:100,
-        width:40
+        width:35
     };
     this.ballOptions = {
         ballRadius:4,
@@ -1821,6 +1814,24 @@ var webgl = new function(){
         curveR:186,
         stoneTexture:undefined,
     }
+    this.npc = {
+        $dom:$(".npc"),
+        isShow:false,
+    }
+    this.branchSelector = {
+        stage0:{
+            haveShow:false,
+        },
+        stage1:{
+            haveShow:false,
+        },
+        stage2:{
+            haveShow:false,
+        },
+        stage3:{
+            haveShow:false,
+        }
+    }
 
     //cacheData
     this.cacheData = {
@@ -2028,6 +2039,7 @@ webgl.loadCallback = function(){
     var stageOption = this.mapData[ stage ]
 
     initAmbientLight()//环境光
+    initFog()
     _this.createNextRoadWithFBX()//道路
     _this.initCacheData();//生成所有地图数据,并隐藏
     initGravity.call( this )//重力
@@ -2040,6 +2052,10 @@ webgl.loadCallback = function(){
             intensity:1,
         });//可被移除的对象
         three.scene.add(ambientLight);
+    }
+    function initFog(){
+        var fog = new THREE.FogExp2( 0xeeeeee, 0.005)
+        three.scene.fog = fog
     }
     function initGravity(){
         var scope = this;
@@ -2437,45 +2453,54 @@ webgl.initCacheData = function(){
 
             //生成配置的建筑
             for( var name in data ){
-                var t,isStone = false;
+                var texture,isStone = false;
                 var scale,position
+
+                position = data[ name ].position
+                //石头单独处理
                 if( name == "stone" ){
-                    t = _this.mapData.stoneTexture
-                }else{
-                    t = data[ name ].texture;
-                }
-                // var m = new THREE.SpriteMaterial( { map:t } )
-                // var sprite = new THREE.Sprite( m )
-                // sprite.scale.copy( data[ name ].scale )
-                // group.add( sprite )
-                if( name == "stone" ){
+                    texture = _this.mapData.stoneTexture
                     isStone = true
                     scale = new THREE.Vector3().copy( data[ name ].scale ).multiplyScalar( 0.1 )
-                    // data[ name ].scale.multiplyScalar( 0.1 )
 
+                    var geo = three.getPlaneGeo({
+                        width:data[ name ].width,
+                        height:scale.y,
+                        Ws:10,
+                        Hs:10
+                    })
+                    var material = new THREE.MeshBasicMaterial({
+                        wireframe:true,
+                        color:0xff0000
+                    })
+                    var stone = new THREE.Mesh( geo, material )
+                    stone.position.copy( position )
+                    group.add( stone )
+                    // data[ name ].scale.multiplyScalar( 0.1 )
                 }else{
+                    texture = data[ name ].texture;
+
                     if( data[ name ].multiply ){
                         scale = new THREE.Vector3().copy( data[ name ].scale ).multiplyScalar( data[ name ].multiply )
                     }else{
                         scale = new THREE.Vector3().copy( data[ name ].scale ).multiplyScalar( 0.1 )
                     }
-
                     // data[ name ].scale.multiplyScalar( 0.2 )
                 }
 
-                var g = three.getPlaneGeo({
+
+                var geometry = three.getPlaneGeo({
                     width:scale.x,
                     height:scale.y,
-
                 })
-                var m = new THREE.MeshBasicMaterial( {
-                    map : t,
+                var material = new THREE.MeshBasicMaterial( {
+                    map : texture,
                     transparent : true,
                     side : THREE.DoubleSide,
                     // depthWrite:false,
                 } )
-                var mesh = new THREE.Mesh( g, m )
-                mesh.position.copy( data[ name ].position )
+                var mesh = new THREE.Mesh( geometry, material )
+                mesh.position.copy( position )
                 group.add( mesh )
             }
         }
@@ -2516,7 +2541,7 @@ webgl.slowDown = function( callback ){
         _this.gameState = _this.state.waitChose;
     },onComplete:callback})
 }//球减速
-webgl.initBall = function(){
+webgl.initBall = function( callback ){
 
     var option = this.ballOptions;
 
@@ -2559,7 +2584,9 @@ webgl.initBall = function(){
     setTimeout( function () {
         _this.ballScrollTo( destination, 2, function(){
             _this.gameState = _this.state.wait;
-            _this.start()
+            if( callback ){
+                callback()
+            }
         } )
     }, 1000)
 
@@ -2862,7 +2889,22 @@ webgl.updateNextMapInfo = function(){
     //update stone.g_position
     this.mapData[ nextStage ][ type ].stone.g_position.addVectors( global_offset, this.mapData[ nextStage ][ type ].stone.position )
 
-};
+};//迭代更新下一个场景的数据
+webgl.showNPC = function(){
+    if( !this.npc.isShow ){
+        this.npc.$dom.show().addClass("npc-show");
+        this.npc.isShow = true
+    }
+}
+
+webgl.hideNPC = function(){
+    var _this = this;
+    this.npc.$dom.removeClass("npc-show")
+    setTimeout(function(){
+        _this.npc.$dom.hide()
+        _this.npc.isShow = false
+    },500)
+}
 
 webgl.ballScrollTo = function( destination, duration, callback ){
 
@@ -3217,7 +3259,7 @@ webgl.testStone = function(){
     if( (this.ballMesh.position.z > stoneOption.g_position.z ) && (this.ballMesh.position.z + this.ballOptions.speedZ < stoneOption.g_position.z) ){
         testZ = true
     }
-    if( Math.abs(this.ballMesh.position.x - stoneOption.g_position.x) < stoneOption.halfWidth ){
+    if( Math.abs(this.ballMesh.position.x - stoneOption.g_position.x) < ( stoneOption.halfWidth + this.ballOptions.ballRadius )){
         testX = true
     }
 
@@ -3304,12 +3346,12 @@ webgl.render = function(){
                 this.getViewSpeed()
                 this.setCameraFollowBall()
                 if( this.ballMesh.position.z <= this.mapData.stage0.g_distance.z ){
-                    this.gravity.allow = false
-                    this.ballScrollTo(new THREE.Vector3().copy( this.mapData.stage0.g_end ), 3, function(){
-                        _this.gameState = _this.state.waitChose;
-                        $(".arrow-box").fi();
-                    })
-                    this.gameState = this.state.slowDown
+                    // this.gravity.allow = false
+                    // this.ballScrollTo(new THREE.Vector3().copy( this.mapData.stage0.g_end ), 3, function(){
+                    //     _this.gameState = _this.state.waitChose;
+                    //     $(".arrow-box").fi();
+                    // })
+                    // this.gameState = this.state.slowDown
                 }
                 break;
             case "stage1":
@@ -3357,6 +3399,7 @@ webgl.render = function(){
                     })
                     this.gameState = this.state.slowDown
                 }
+                this.testStone()
                 break;
             case "stage4":
                 this.ballRender();
@@ -3369,6 +3412,7 @@ webgl.render = function(){
                     })
                     this.gameState = this.state.slowDown
                 }
+                this.testStone()
                 break;
             case "stage5":
                 break;
@@ -4041,7 +4085,7 @@ main.gameEnd = function(){
     $(".reason-btn").show()
     $(".rule-btn").hide()
 
-
+    clearInterval( webgl.timer.id )
 }
 main.prule = function(){
     $(".P_rule").fi();
@@ -4101,9 +4145,10 @@ main.addEvent=function(){
         e.preventDefault();
     }
 
-    $(window).resize(function(){
-        three.onresize();
-        console.log( three.width )
+    $( window ).resize(function(){
+        setTimeout(function(){
+            three.onresize();
+        },500)
     })
 
 };
@@ -4175,6 +4220,7 @@ function onOrientChange3(){
         if( !main.haveGetResult ){
             vm.pwebgl.visible = false;
             vm.presult.visible = true;
+            vm.top.visible = true;
             main.haveGetResult = true
         }
         $(".hp").hide()

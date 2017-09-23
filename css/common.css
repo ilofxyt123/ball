@@ -196,3 +196,4 @@ a, button, input {
     }
 }
 /*迷你加载器*/
+.transition{ transition: transform 0.5s ease-out }

@@ -73,15 +73,15 @@ img{position: absolute;}
                 .arrow-box .btn{ }
                 .arrow-box .btn1{ float: left; }
                 .arrow-box .btn2{ float: right;}
-                    .btn .arr{width: 1.2rem;
-                        position: static;
-                        margin: 0 auto;}
-                    .btn .txt{width: 1.3rem;
-                        position: static;}
+                    .btn .arr{width: 1.2rem;position:static;margin:0 auto;}
+                    .btn .txt{width: 1.3rem;position:static;}
         .time-box{width:2.28rem;height:0.75rem;position:absolute;left:0.3rem;top:0.3rem;z-index:9;}
             .time-box .time-bg{width:100%;}
             .time-box span.time-txt{position: absolute; width: 0.5rem; height: 0.3rem; line-height: 0.3rem; color: #64381f; left: 1.5rem; top: 0.34rem; font-size: 0.3rem;}
 
+        .npc{width:1.11rem;height:1.95rem;position:absolute;right:-2.11rem;bottom:-2.95rem;background-image: url("../assets/images/p6_01.png");background-repeat: no-repeat;background-size: 2.22rem 1.95rem;}
+        .npc-show{transform:translate3d(-2.11rem,-2.95rem,0)}
+            .npc .dialog{width:1.8rem;left:-0.9rem;top:-0.9rem;}
 
     .P_address{background-color:rgba(0,0,0,0.8);z-index:101;}
         .paddress-box{width:4.7rem;height:6.53rem;position: absolute;left:50%;margin-left:-2.35rem;top:1.65rem;}

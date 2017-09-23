@@ -69,6 +69,9 @@
         .p1-2{width:0.76rem;left:50%;top:4.5rem;margin-left:-0.38rem;z-index:2;}
         .p1-3{width:6.5rem;left:50%;top:0.5rem;margin-left:-3.25rem;}
         .p1-4{width:5.38rem;height:2.9rem;position: absolute;left:50%;margin-left:-2.69rem;top:2.2rem;background-image: url("./assets/images/p3.jpg");background-repeat: no-repeat;background-size: 16.14rem 2.9rem;}
+        .p1-5{width:2.5rem;position: absolute;right:1rem;bottom:-0.1rem;}
+        .p1-6{width:2rem;position: absolute;right:-0.8rem;bottom:0.7rem;}
+        .p1-7{width:1.73rem;position: absolute;right:-0.9rem;bottom:-0.3rem;}
     .top{width:100%;position:absolute;padding:0.2rem;z-index:100;}
         .top .reason-btn{width:1.11rem;position: static;float:left;}
         .top .music-btn{width:0.36rem;position: static;float:right;margin:0.1rem;}
@@ -77,7 +80,7 @@
 
 <style>
     .P2{}
-        .P2 .bg-pic{z-index:-1;width:100%;}
+        .P2 .bg-pic{z-index:-1;width:100%;bottom:0;}
         .P2 .p2-pic1{width:3.52rem;left:50%;margin-left:-1.76rem;top:0.4rem;}
         .P2 .chose-box{width:5.7rem;left:50%;margin-left:-2.85rem;top:2rem;position:absolute;}
             .chose-box .sex-box{left:0;}
@@ -137,6 +140,10 @@
             <img class="p1-2" src="assets/images/p3_02.png" @touchend.once="p1_btn_start">
             <img class="p1-3" src="assets/images/p3_03.png">
             <div class="p1-4 ani-p1-fish" @touchend.once="p1_btn_start"></div>
+
+            <img class="p1-5 opacity ani-slideFromRight ani-time06" src="assets/images/p3_01_1.png">
+            <img class="p1-6 opacity ani-slideFromDown ani-time06" src="assets/images/p3_01_2.png">
+            <img class="p1-7 opacity ani-fadeIn ani-time06" src="assets/images/p3_01_3.png">
         </div>
     </transition>
 
@@ -174,24 +181,27 @@
             <div id="gl-touch" style="width:100%;height:100%;position:absolute;z-index:8;"></div>
             <div id="gui" style="position: absolute;z-index:10;right:0"></div>
 
+            <!--玩法提示 11-->
             <div class="tip-mask" style="position:absolute;width:100%;height:100%;z-index:11;display:none;background-color:rgba(0,0,0,0.8)" @touchend.once="pwebgl_btn_closeTip">
-                <img src="assets/images/p5_01.png" style="width:3.23rem;left:50%;margin-left:-1.61rem;top:2.5rem;">
+                <img src="assets/images/p5_01.png" style="width:5rem;height:2.05rem;left:50%;margin-left:-2.5rem;top:50%;margin-top:-1rem;">
             </div>
+
+            <!--左右选择 10-->
             <div class="tip-box">
                 <div class="arrow-box arrow-box1" style="display:none;">
                     <img src="assets/images/p7_01.png" class="tip-tile" v-show="userData.stage=='stage0'">
                     <img src="assets/images/p7_01_1.png" class="tip-tile" v-show="userData.stage=='stage1'">
                     <img src="assets/images/p7_01_2.png" class="tip-tile" v-show="userData.stage=='stage2'">
                     <img src="assets/images/p7_01_3.png" class="tip-tile" v-show="userData.stage=='stage3'">
-                    <div class="btn btn1">
-                        <img src="assets/images/p7_02.png" class="arr" @touchend.once="webgl_btn_chose('left')">
+                    <div class="btn btn1" >
+                        <img src="assets/images/p7_02.png" class="arr" @touchend="webgl_btn_chose('left')">
                         <img src="assets/images/p7_02_0.png" class="txt" v-show="userData.stage=='stage0'">
                         <img src="assets/images/p7_02_1.png" class="txt" v-show="userData.stage=='stage1'">
                         <img src="assets/images/p7_02_2.png" class="txt" v-show="userData.stage=='stage2'">
                         <img src="assets/images/p7_02_3.png" class="txt" v-show="userData.stage=='stage3'">
                     </div>
                     <div class="btn btn2">
-                        <img src="assets/images/p7_03.png" class="arr" @touchend.once="webgl_btn_chose('right')">
+                        <img src="assets/images/p7_03.png" class="arr"  @touchend="webgl_btn_chose('right')">
                         <img src="assets/images/p7_03_0.png" class="txt" v-show="userData.stage=='stage0'">
                         <img src="assets/images/p7_03_1.png" class="txt" v-show="userData.stage=='stage1'">
                         <img src="assets/images/p7_03_2.png" class="txt" v-show="userData.stage=='stage2'">
@@ -215,9 +225,15 @@
                 <!--</div>-->
             </div>
 
+            <!--计时器 9-->
             <div class="time-box">
                 <img src="assets/images/p9_08.png" class="time-bg">
-                <span class="time-txt">20</span>
+                <span class="time-txt">0</span>
+            </div>
+
+            <!--说话老头 10-->
+            <div class="npc ani-npc transition" style="display:none;">
+                <img class="dialog opacity delay05 ani-fadeIn" src="assets/images/p6_02.png">
             </div>
 
         </div>
@@ -263,14 +279,14 @@
                 <img src="assets/images/p10_02.png" class="board-bg">
                 <img src="assets/images/p10_03.png" class="board-xx" @touchend="pboard_btn_close">
 
-                <img src="assets/images/p10_01.png" class="circle1">
-                <img src="assets/images/p10_01.png" class="circle1">
-                <img src="assets/images/p10_01.png" class="circle2">
-                <img src="assets/images/p10_01.png" class="circle2">
-                <img src="assets/images/p10_01.png" class="circle3">
-                <img src="assets/images/p10_01.png" class="circle3">
-                <img src="assets/images/p10_01.png" class="circle4">
-                <img src="assets/images/p10_01.png" class="circle4">
+                <img src="assets/images/p10_01.png" class="circle1" v-show="userData.chose[0] == 'left'">
+                <img src="assets/images/p10_01.png" class="circle1" v-show="userData.chose[0] == 'right'">
+                <img src="assets/images/p10_01.png" class="circle2" v-show="userData.chose[1] == 'left'">
+                <img src="assets/images/p10_01.png" class="circle2" v-show="userData.chose[1] == 'right'">
+                <img src="assets/images/p10_01.png" class="circle3" v-show="userData.chose[2] == 'left'">
+                <img src="assets/images/p10_01.png" class="circle3" v-show="userData.chose[2] == 'right'">
+                <img src="assets/images/p10_01.png" class="circle4" v-show="userData.chose[3] == 'left'">
+                <img src="assets/images/p10_01.png" class="circle4" v-show="userData.chose[3] == 'right'">
             </div>
         </div>
     </transition>
