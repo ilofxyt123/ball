@@ -215,6 +215,7 @@ var Utils = new function(){
             for(var i=0;i<len;i++){
                 imgObj = a.eq(i);
                 imgObj.attr("src",imgObj.attr("data-src"));
+                imgObj.removeClass("lazy")
             }
         };
         Load();
@@ -1234,7 +1235,7 @@ var webgl = new function(){
 
     this.FBXData = {
         bridge:{
-            depth:81,
+            depth:90,
             name:"bridge",
             url:this.modelsUrl+"bridge3.fbx",
             position:new THREE.Vector3(),
@@ -1326,25 +1327,34 @@ var webgl = new function(){
     this.mapData = {
         stage0:{
             index:0,
-            depth:243,
+            depth:270,
             segments:3,
             width:40,
             offset:new THREE.Vector3(),//起点的全局偏移
             start:new THREE.Vector3( 0, 0, 0 ),//内部起点
-            end:new THREE.Vector3( 0, 0, -243 ),//内部终点
-            g_end:new THREE.Vector3(0, 0, -243),//全局end
+            end:new THREE.Vector3( 0, 0, -270 ),//内部终点
+            g_end:new THREE.Vector3(0, 0, -270),//全局end
             distance:new THREE.Vector3( 0, 0, -80 ),//内部distance
             g_distance:new THREE.Vector3( 0, 0, -80 ),//全局减速点
             dir:undefined,
             roadFBXGroup:undefined,
-            builder:{
-
-            }
+            building:{
+                left_grass:{
+                    texture:['stage1','left','left_grass'],
+                    position:new THREE.Vector3(-50,5,-100),
+                    scale:new THREE.Vector3()
+                },
+                left_tree1:{
+                    texture:['stage4','right','left_tree1'],
+                    position:new THREE.Vector3(-50,15,-200),
+                    scale:new THREE.Vector3()
+                },
+            },
         },
         stage1:{
             index:1,
             depth:810,
-            segments:10,
+            segments:9,
             width:40,
             offset:new THREE.Vector3(),//起点的全局偏移
             start:new THREE.Vector3( 0, 0, 0 ),//内部起点
@@ -1481,12 +1491,16 @@ var webgl = new function(){
                     texture:undefined
                 },
 
-            }
+            },
+            cloneGroup:{
+                obj:undefined,
+                offset:new THREE.Vector3(0, 0, -350)
+            },
         },
         stage2:{
             index:2,
             depth:810,
-            segments:10,
+            segments:9,
             width:40,
             offset:new THREE.Vector3(),//起点的全局偏移
             start:new THREE.Vector3(0,0,0),//起点
@@ -1538,7 +1552,7 @@ var webgl = new function(){
 
                 right_grass:{
                     name:"2",
-                    position:new THREE.Vector3(60, 10,-130),
+                    position:new THREE.Vector3(50, 5,-130),
                     scale:new THREE.Vector3(265,224,1),
                     texture:undefined
                 },
@@ -1607,12 +1621,16 @@ var webgl = new function(){
                     scale:new THREE.Vector3(293,335,1),
                     texture:undefined
                 },
-            }//right
+            },//right
+            cloneGroup:{
+                obj:undefined,
+                offset:new THREE.Vector3(0, 0, -350)
+            },
         },
         stage3:{
             index:3,
             depth:810,
-            segments:10,
+            segments:9,
             width:40,
             offset:new THREE.Vector3(),//起点的全局偏移
             start:new THREE.Vector3(),//起点
@@ -1711,12 +1729,16 @@ var webgl = new function(){
                     texture:undefined
                 },
 
-            }//right
+            },//right
+            cloneGroup:{
+                obj:undefined,
+                offset:new THREE.Vector3(0, 0, -350)
+            },
         },
         stage4:{
             index:4,
             depth:810,
-            segments:10,
+            segments:9,
             width:40,
             offset:new THREE.Vector3(),//起点的全局偏移
             start:new THREE.Vector3(),//起点
@@ -1807,7 +1829,11 @@ var webgl = new function(){
                     scale:new THREE.Vector3(324,330,1),
                     texture:undefined
                 },
-            }//right
+            },//right
+            cloneGroup:{
+                obj:undefined,
+                offset:new THREE.Vector3(0, 0, -350)
+            },
         },
         preStage:undefined,
         stage:"stage0",
@@ -1871,6 +1897,9 @@ var webgl = new function(){
 
     //ball
     this.ballMesh = undefined
+    this.lightMesh = undefined
+    this.shadowMesh = undefined
+    this.ballGroup = undefined
 
     //curveLine1
     this.curveLine1 = undefined;
@@ -1901,7 +1930,7 @@ webgl.init = function(){
 
     var _this = this;
     var t = new THREE.TextureLoader().load( main.picUrl+"pf.jpg" )
-    t.wrapT = t.wrapS = THREE.RepeatWrapping
+    t.repeat.set( 1, 4 )
     t.needsUpdate = true
     var material = new THREE.MeshLambertMaterial({
         map:t,
@@ -2060,7 +2089,7 @@ webgl.loadCallback = function(){
         three.scene.add(ambientLight);
     }
     function initFog(){
-        var fog = new THREE.FogExp2( 0xeeeeee, 0.005)
+        var fog = new THREE.FogExp2( 0xeeeeee, 0.003)
         three.scene.fog = fog
     }
     function initGravity(){
@@ -2162,7 +2191,7 @@ webgl.loadCallback = function(){
         initAxisHelper();//坐标轴辅助线
         initFps.call( this );//fps
         CurveTest.call( this )//测试曲线
-        createPlaneFloor( stageOption )
+        // createPlaneFloor( stageOption )
     }
 
     //debug
@@ -2262,7 +2291,7 @@ webgl.loadCallback = function(){
                 _this.orbit.target = new THREE.Vector3().copy( _this.mapData.stage4.offset )
             }
             this.看球 = function(){
-                _this.orbit.target = new THREE.Vector3().copy( _this.ballMesh.position )
+                _this.orbit.target = new THREE.Vector3().copy( _this.ballGroup.position )
             }
         };
 
@@ -2418,6 +2447,7 @@ webgl.initCacheData = function(){
     }
 
     function createFBXGroup( option, dir ){
+        //整个道路
         var group = new THREE.Group();
 
         //bridge模型数量,生成直线
@@ -2438,6 +2468,10 @@ webgl.initCacheData = function(){
 
         }
 
+        //第一组建筑
+        var group1 = new THREE.Group();
+        //克隆另一组
+        var groupClone = new THREE.Group();
         //加入房子
         if( option.index != 0 ){//0场景不需要加建筑
             var data = stageOption[ dir ]
@@ -2457,17 +2491,15 @@ webgl.initCacheData = function(){
                 group.add( right_fbx )
             }
 
+
             //生成配置的建筑
             for( var name in data ){
-                var texture,isStone = false;
+                var texture
                 var scale,position
 
                 position = data[ name ].position
                 //石头单独处理
                 if( name == "stone" ){
-                    texture = _this.mapData.stoneTexture
-                    isStone = true
-                    scale = new THREE.Vector3().copy( data[ name ].scale ).multiplyScalar( 0.1 )
 
                     //红色线框
                     // var geo = three.getPlaneGeo({
@@ -2494,32 +2526,59 @@ webgl.initCacheData = function(){
                         scale = new THREE.Vector3().copy( data[ name ].scale ).multiplyScalar( 0.1 )
                     }
                     // data[ name ].scale.multiplyScalar( 0.2 )
+
+                    var geometry = three.getPlaneGeo({
+                        width:scale.x,
+                        height:scale.y,
+                    })
+                    var material = new THREE.MeshBasicMaterial( {
+                        map : texture,
+                        transparent : true,
+                        side : THREE.DoubleSide,
+                        // depthWrite:false,
+                    } )
+                    var mesh = new THREE.Mesh( geometry, material )
+                    mesh.position.copy( position )
+                    group1.add( mesh )
                 }
 
 
-                var geometry = three.getPlaneGeo({
-                    width:scale.x,
-                    height:scale.y,
-                })
-                var material = new THREE.MeshBasicMaterial( {
-                    map : texture,
-                    transparent : true,
-                    side : THREE.DoubleSide,
-                    // depthWrite:false,
-                } )
-                var mesh = new THREE.Mesh( geometry, material )
-                mesh.position.copy( position )
-                group.add( mesh )
+
+
             }
+
+            group2 = group1.clone()
+
+            //单独处理石头
+            texture = _this.mapData.stoneTexture
+            scale = new THREE.Vector3().copy( data.stone.scale ).multiplyScalar( 0.1 )
+
+            var geometry = three.getPlaneGeo({
+                width:scale.x,
+                height:scale.y,
+            })
+            var material = new THREE.MeshBasicMaterial( {
+                map : texture,
+                transparent : true,
+                side : THREE.DoubleSide,
+                // depthWrite:false,
+            } )
+            var stoneMesh = new THREE.Mesh( geometry, material )
+            stoneMesh.position.copy( data.stone.position )
+
+            group1.add( stoneMesh )
+            group2.position.add( stageOption.cloneGroup.offset )
+            group.add( group1 )
+            group.add( group2 )
         }
 
         return group;
     }
-}
+};
 
 //初始化用到的方法
 webgl.reset = function(){
-    this.ballMesh.position.set(0,this.ballOptions.ballRadius,0 )
+    this.ballGroup.position.set(0,this.ballOptions.ballRadius,0 )
     this.ballOptions.speedX = 0;
     this.ballOptions.speedZ = 0;
 
@@ -2551,7 +2610,9 @@ webgl.slowDown = function( callback ){
 }//球减速
 webgl.initBall = function( callback ){
 
-    var option = this.ballOptions;
+    var _this = this;
+    _this.ballGroup = new THREE.Group();
+    var option = _this.ballOptions;
 
     var g = three.getSphereGeometry({
         R:option.ballRadius,
@@ -2563,13 +2624,66 @@ webgl.initBall = function( callback ){
     var m = new THREE.MeshLambertMaterial({map:t,transparent:true})
     var mesh = new THREE.Mesh( g, m )
 
-    mesh.position.set( option.startPosition.x, option.startPosition.y, option.startPosition.z )
+    _this.ballGroup.position.set( option.startPosition.x, option.startPosition.y, option.startPosition.z )
 
-    three.scene.add( mesh )
-    this.ballMesh = mesh;
+    three.scene.add( _this.ballGroup )
+    _this.ballMesh = mesh;
+    _this.ballGroup.add( mesh )
 
+    //球体阴影
+    var shadowTexture = new THREE.Texture( main.ImageResult['shadow'][0] )
+    shadowTexture.needsUpdate = true;
+    var shadowGeo = three.getPlaneGeo({
+        width:option.ballRadius * 2,
+        height:option.ballRadius * 2
+    })
+    var shadowMaterial = new THREE.MeshBasicMaterial({
+        map : shadowTexture,
+        transparent : true,
+        depthWrite : false
+    })
+    var shadowMesh = new THREE.Mesh( shadowGeo, shadowMaterial )
+    shadowMesh.rotation.x = - Math.PI / 2
+    shadowMesh.position.y = -option.ballRadius
+    _this.ballGroup.add( shadowMesh )
 
-    var _this = this;
+    //球体外框
+    var outerTexture = new THREE.Texture( main.ImageResult['border'][0] )
+    outerTexture.needsUpdate = true;
+    var outerGeo = three.getPlaneGeo({
+        width:option.ballRadius * 2,
+        height:option.ballRadius * 2
+    })
+    var outerMaterial = new THREE.MeshBasicMaterial({
+        map : outerTexture,
+        transparent : true,
+    })
+    var outerMesh = new THREE.Mesh( outerGeo, outerMaterial )
+    outerMesh.scale.x = 1.05
+    outerMesh.scale.y = 1.05
+    outerMesh.rotation.x = -Math.PI / 6
+    _this.ballGroup.add( outerMesh )
+
+    //球体高光
+    var lightTexture = new THREE.Texture( main.ImageResult['light'][0] )
+    lightTexture.needsUpdate = true;
+    var lightGeo = three.getPlaneGeo({
+        width:option.ballRadius * 2,
+        height:option.ballRadius * 2
+    })
+    var lightMaterial = new THREE.MeshBasicMaterial({
+        map : lightTexture,
+        transparent : true,
+    })
+    var lightMesh = new THREE.Mesh( lightGeo, lightMaterial )
+    lightMesh.scale.x = 1.05
+    lightMesh.scale.y = 1.05
+    lightMesh.position.z = _this.ballOptions.ballRadius
+    _this.ballGroup.add( lightMesh )
+
+    this.lightMesh = lightMesh
+    this.shadowMesh = shadowMesh
+
     // setTimeout(function(){
     //     var preV = 0;
     //     var v = 0;
@@ -2602,6 +2716,11 @@ webgl.initBall = function( callback ){
 };
 
 //复用方法
+webgl.restart = function(){
+
+    vm.pwebgl.visible = true;
+    vm.presult.visible = false;
+};
 webgl.getPointsFromCurve = function ( points, divisions, offset ) {
 
     for( var i = 0; i < divisions; i ++ ){
@@ -2639,22 +2758,22 @@ webgl.afterChose = function( dir ){
 
     webgl.runCurve( function(){
         three.camera.rotation.y = 0;
-        three.camera.rotation.x = 0
+        three.camera.rotation.x = 0;
+        _this.ballOptions.speedX = 0;
         // _this.gameState = _this.state["waitChose"]
         var stage = _this.mapData.stage
         _this.gameState = _this.state[ stage ]
 
-        var obj = _this.ballOptions;
-        TweenMax.to(obj,1,{speedZ:obj.startSpeedZ,onComplete:function(){
-            _this.gravity.allow = true;
-            var preRoad = _this.mapData[_this.mapData.preStage].roadFBXGroup
-            three.scene.remove( preRoad )
-        }})
+         _this.ballOptions.speedZ = _this.ballOptions.startSpeedZ;
+        _this.gravity.allow = true;
+        var preRoad = _this.mapData[_this.mapData.preStage].roadFBXGroup
+        three.scene.remove( preRoad )
     } );
 };
 webgl.createNextRoadWithFBX = function(){
     var _this = this;
-    var stage = this.mapData.stage,order = stage.slice( -1 );
+    var stage = this.mapData.stage,
+        order = stage.slice( -1 );
     var stageOption = this.mapData[ stage ];
 
     //弯道数据更新
@@ -2771,6 +2890,42 @@ webgl.createNextRoadWithFBX = function(){
             } )
             var mesh = new THREE.Mesh( g, m )
             mesh.position.copy( data[ name ].position )
+            group.add( mesh )
+        }
+    }else if( order == 0 ){
+
+        var data = stageOption.building;
+        for( var name in data ){
+
+            var texture
+            var scale,position
+
+            position = data[ name ].position
+            //石头单独处理
+
+            var textureConfig = data[ name ].texture;
+            texture = _this.mapData[ textureConfig[0] ][ textureConfig[1] ][ textureConfig[2] ].texture
+
+            scale = data[ name ].scale.copy( _this.mapData[ textureConfig[0] ][ textureConfig[1] ][ textureConfig[2] ].scale )
+
+            if( data[ name ].multiply ){
+                scale.multiplyScalar( data[ name ].multiply )
+            }else{
+                scale.multiplyScalar( 0.1 )
+            }
+
+            var geometry = three.getPlaneGeo({
+                width:scale.x,
+                height:scale.y,
+            })
+            var material = new THREE.MeshBasicMaterial( {
+                map : texture,
+                transparent : true,
+                side : THREE.DoubleSide,
+                // depthWrite:false,
+            } )
+            var mesh = new THREE.Mesh( geometry, material )
+            mesh.position.copy( position )
             group.add( mesh )
         }
     }
@@ -2954,7 +3109,7 @@ webgl.ballScrollTo = function( destination, duration, callback ){
 
     var v = new THREE.Vector3( 0, 0, 0 );
 
-    var position = this.ballMesh.position;
+    var position = this.ballGroup.position;
     var prePos = new THREE.Vector3( 0, 0, 0 ).copy( position );
 
     TweenMax.to(position, duration, { x:destination.x, z:destination.z, onUpdate:function( v3 ){
@@ -3236,35 +3391,40 @@ webgl.updateTexture = function(){
     }
 
 };
-webgl.ballRender = function(){
+webgl.ballRender = (function(){
+    var speedX;
+    var speedZ;
+    var tempMat;
+    var forward = new THREE.Vector3(0,0,1)
+    var right = new THREE.Vector3(1,0,0)
+    return function(){
+        //Update ballGroup position
+        speedX  = this.ballOptions.speedX;
+        speedZ  = this.ballOptions.speedZ;
 
-        //Update ball position
-        var speedX  = this.ballOptions.speedX;
-        var speedZ  = this.ballOptions.speedZ;
-
-        this.ballMesh.position.z += speedZ;
-        this.ballMesh.position.x += speedX;
+        this.ballGroup.position.z += speedZ;
+        this.ballGroup.position.x += speedX;
 
         // Update ball rotation.
-        var tempMat = new THREE.Matrix4();
-        tempMat.makeRotationAxis(new THREE.Vector3(0,0,1), -speedX/this.ballOptions.ballRadius);
+        tempMat = new THREE.Matrix4()
+        tempMat.makeRotationAxis(forward, -speedX/this.ballOptions.ballRadius);
         tempMat.multiply(this.ballMesh.matrix);
         this.ballMesh.matrix = tempMat;
 
         tempMat = new THREE.Matrix4();
-        tempMat.makeRotationAxis(new THREE.Vector3(1,0,0), speedZ/this.ballOptions.ballRadius);
+        tempMat.makeRotationAxis(right, speedZ/this.ballOptions.ballRadius);
         tempMat.multiply(this.ballMesh.matrix);
         this.ballMesh.matrix = tempMat;
         this.ballMesh.rotation.setFromRotationMatrix(this.ballMesh.matrix);
-
-};
+    }
+})();
 webgl.getViewSpeed = function(){
     var range = 100
     this.ballOptions.viewSpeedZ =Math.abs( this.ballOptions.speedZ ) / ( this.ballOptions.maxZ - this.ballOptions.minZ ) * range
 };
 webgl.calCollision = function(){
     var scope = this;
-    var left_distance = calEdge( this.ballMesh.position.x );
+    var left_distance = calEdge( this.ballGroup.position.x );
 
     //z方向速度范围
     var range = [ this.ballOptions.minZ, this.ballOptions.maxZ ]
@@ -3273,7 +3433,7 @@ webgl.calCollision = function(){
         this.ballOptions.speedZ = ( left_distance / 5 ) * ( range[0] - range[1] ) + this.ballOptions.maxZ;
 
         //x方向速度最小为0
-        if( calEdge( this.ballMesh.position.x + this.ballOptions.speedX ) < 0 ){
+        if( calEdge( this.ballGroup.position.x + this.ballOptions.speedX ) < 0 ){
             this.ballOptions.speedX = 0;
         }
     }else{
@@ -3300,17 +3460,20 @@ webgl.testStone = function(){
 
     var testX = false
     var testZ = false
-    if( (this.ballMesh.position.z > stoneOption.g_position.z ) && (this.ballMesh.position.z + this.ballOptions.speedZ < stoneOption.g_position.z) ){
+    if( (this.ballGroup.position.z > stoneOption.g_position.z ) && (this.ballGroup.position.z + this.ballOptions.speedZ < stoneOption.g_position.z) ){
         testZ = true
     }
-    if( Math.abs(this.ballMesh.position.x - stoneOption.g_position.x) < ( stoneOption.halfWidth + this.ballOptions.ballRadius )){
+    if( Math.abs(this.ballGroup.position.x - stoneOption.g_position.x) < ( stoneOption.halfWidth + this.ballOptions.ballRadius )){
         testX = true
     }
 
     if( testZ && testX ){
         this.gameState = this.state.bump
         this.ballOptions.energy = 0;
-        TweenMax.fromTo( this.ballMesh.material ,0.5,{opacity:0},{ opacity:1,yoyo:true,repeat:6})
+        TweenMax.fromTo( this.ballMesh.material ,0.5,{ opacity:0 },{ opacity:1,yoyo:true,repeat:6})
+        TweenMax.fromTo( this.lightMesh.material ,0.5,{ opacity:0 },{ opacity:1,yoyo:true,repeat:6})
+        TweenMax.fromTo( this.shadowMesh.material ,0.5,{ opacity:0 },{ opacity:1,yoyo:true,repeat:6})
+
         TweenMax.to( this.ballOptions,1,{ energy:1,onComplete:function(){
             webgl.gameState = webgl.state [ webgl.mapData.stage ]
         }})
@@ -3319,8 +3482,8 @@ webgl.testStone = function(){
 
 }
 webgl.setCameraFollowBall = function(){
-    three.camera.position.x = this.ballMesh.position.x
-    three.camera.position.z = this.ballMesh.position.z+70
+    three.camera.position.x = this.ballGroup.position.x
+    three.camera.position.z = this.ballGroup.position.z+70
 };
 webgl.setCameraPositionOnCurve = function( t ){
 
@@ -3331,9 +3494,6 @@ webgl.setCameraPositionOnCurve = function( t ){
     // three.camera.position.x = position.x
     // three.camera.position.z = position.z
 
-
-    //update rotation
-    var v = new THREE.Vector3().subVectors( this.ballMesh.position, three.camera.position )
 
 };
 webgl.runCurve = function( callback ){
@@ -3346,7 +3506,7 @@ webgl.runCurve = function( callback ){
     }
 
     var v = new THREE.Vector3()
-    var prePos = new THREE.Vector3().copy( this.ballMesh.position )
+    var prePos = new THREE.Vector3().copy( this.ballGroup.position )
     var position = new THREE.Vector3().copy( prePos );
 
     var T = TweenMax.to( obj,4,{t:1,onUpdate:function( obj ){
@@ -3379,16 +3539,16 @@ webgl.render = function(){
                 break;
             case "enter":
                 this.ballRender();
-                this.getViewSpeed();
+                // this.getViewSpeed();
                 break;
             case "wait":
                 break;
             case "startFrom0":
                 this.ballRender();
-                this.getViewSpeed()
+                // this.getViewSpeed()
                 this.setCameraFollowBall()
                 //出提示的点
-                if( (this.ballMesh.position.z > this.mapData.stage0.g_distance.z) &&(this.ballMesh.position.z + this.ballOptions.speedZ <= this.mapData.stage0.g_distance.z)){
+                if( (this.ballGroup.position.z > this.mapData.stage0.g_distance.z) &&(this.ballGroup.position.z + this.ballOptions.speedZ <= this.mapData.stage0.g_distance.z)){
                     // this.gravity.allow = false
                     // this.ballScrollTo(new THREE.Vector3().copy( this.mapData.stage0.g_end ), 3, function(){
                     //     _this.gameState = _this.state.waitChose;
@@ -3405,7 +3565,7 @@ webgl.render = function(){
                 break;
             case "stage0":
                 this.ballRender();
-                this.getViewSpeed()
+                // this.getViewSpeed()
                 this.setCameraFollowBall()
                 //出提示的点
                 if( (this.ballMesh.position.z > this.mapData.stage0.g_distance.z) &&(this.ballMesh.position.z + this.ballOptions.speedZ <= this.mapData.stage0.g_distance.z)){
@@ -3423,10 +3583,10 @@ webgl.render = function(){
                     }
                 }
                 //拐弯点
-                else if( (this.ballMesh.position.z > this.mapData.stage0.g_end.z) && (this.ballMesh.position.z + this.ballOptions.speedZ <= this.mapData.stage0.g_end.z)){
+                else if( (this.ballGroup.position.z > this.mapData.stage0.g_end.z) && (this.ballGroup.position.z + this.ballOptions.speedZ <= this.mapData.stage0.g_end.z)){
                     this.branchSelector.$dom.hide()
                     //左拐
-                    if( this.ballMesh.position.x <= this.mapData.stage0.g_end.x ){
+                    if( this.ballGroup.position.x <= this.mapData.stage0.g_end.x ){
                         var dir = 'left'
                     }
                     //右拐
@@ -3438,7 +3598,7 @@ webgl.render = function(){
                 break;
             case "stage1":
                 this.ballRender();
-                this.getViewSpeed();
+                // this.getViewSpeed();
                 this.setCameraFollowBall();
                 // if( this.ballMesh.position.z <= this.mapData.stage1.g_distance.z ){
                 //     this.gravity.allow = false
@@ -3450,17 +3610,17 @@ webgl.render = function(){
                 // }
 
                 //出提示的点
-                if( (this.ballMesh.position.z > this.mapData.stage1.g_distance.z) &&(this.ballMesh.position.z + this.ballOptions.speedZ <= this.mapData.stage1.g_distance.z)){
+                if( (this.ballGroup.position.z > this.mapData.stage1.g_distance.z) &&(this.ballGroup.position.z + this.ballOptions.speedZ <= this.mapData.stage1.g_distance.z)){
                     if( !this.branchSelector.stage1.haveShow ){
                         this.branchSelector.$dom.fi()
                         this.branchSelector.stage1.haveShow = true
                     }
                 }
                 //拐弯点
-                else if( (this.ballMesh.position.z > this.mapData.stage1.g_end.z) && (this.ballMesh.position.z + this.ballOptions.speedZ <= this.mapData.stage1.g_end.z)){
+                else if( (this.ballGroup.position.z > this.mapData.stage1.g_end.z) && (this.ballGroup.position.z + this.ballOptions.speedZ <= this.mapData.stage1.g_end.z)){
                     this.branchSelector.$dom.hide()
                     //左拐
-                    if( this.ballMesh.position.x <= this.mapData.stage1.g_end.x ){
+                    if( this.ballGroup.position.x <= this.mapData.stage1.g_end.x ){
                         var dir = 'left'
                     }
                     //右拐
@@ -3474,12 +3634,12 @@ webgl.render = function(){
                 break;
             case "slowDown":
                 this.ballRender();
-                this.getViewSpeed()
+                // this.getViewSpeed()
                 this.setCameraFollowBall()
                 break;
             case "stage2":
                 this.ballRender();
-                this.getViewSpeed();
+                // this.getViewSpeed();
                 this.setCameraFollowBall();
                 // if( this.ballMesh.position.z <= this.mapData.stage2.g_distance.z ){
                 //     this.gravity.allow = false
@@ -3491,17 +3651,17 @@ webgl.render = function(){
                 // }
 
                 //出提示的点
-                if( (this.ballMesh.position.z > this.mapData.stage2.g_distance.z) &&(this.ballMesh.position.z + this.ballOptions.speedZ <= this.mapData.stage2.g_distance.z)){
+                if( (this.ballGroup.position.z > this.mapData.stage2.g_distance.z) &&(this.ballGroup.position.z + this.ballOptions.speedZ <= this.mapData.stage2.g_distance.z)){
                     if( !this.branchSelector.stage2.haveShow ){
                         this.branchSelector.$dom.fi()
                         this.branchSelector.stage1.haveShow = true
                     }
                 }
                 //拐弯点
-                else if( (this.ballMesh.position.z > this.mapData.stage2.g_end.z) && (this.ballMesh.position.z + this.ballOptions.speedZ <= this.mapData.stage2.g_end.z)){
+                else if( (this.ballGroup.position.z > this.mapData.stage2.g_end.z) && (this.ballGroup.position.z + this.ballOptions.speedZ <= this.mapData.stage2.g_end.z)){
                     this.branchSelector.$dom.hide()
                     //左拐
-                    if( this.ballMesh.position.x <= this.mapData.stage2.g_end.x ){
+                    if( this.ballGroup.position.x <= this.mapData.stage2.g_end.x ){
                         var dir = 'left'
                     }
                     //右拐
@@ -3515,7 +3675,7 @@ webgl.render = function(){
                 break;
             case "stage3":
                 this.ballRender();
-                this.getViewSpeed();
+                // this.getViewSpeed();
                 this.setCameraFollowBall();
                 // if( this.ballMesh.position.z <= this.mapData.stage3.g_distance.z ){
                 //     this.gravity.allow = false
@@ -3527,17 +3687,17 @@ webgl.render = function(){
                 // }
 
                 //出提示的点
-                if( (this.ballMesh.position.z > this.mapData.stage3.g_distance.z) &&(this.ballMesh.position.z + this.ballOptions.speedZ <= this.mapData.stage3.g_distance.z)){
+                if( (this.ballGroup.position.z > this.mapData.stage3.g_distance.z) &&(this.ballGroup.position.z + this.ballOptions.speedZ <= this.mapData.stage3.g_distance.z)){
                     if( !this.branchSelector.stage3.haveShow ){
                         this.branchSelector.$dom.fi()
-                        this.branchSelector.stage1.haveShow = true
+                        this.branchSelector.stage3.haveShow = true
                     }
                 }
                 //拐弯点
-                else if( (this.ballMesh.position.z > this.mapData.stage3.g_end.z) && (this.ballMesh.position.z + this.ballOptions.speedZ <= this.mapData.stage3.g_end.z)){
+                else if( (this.ballGroup.position.z > this.mapData.stage3.g_end.z) && (this.ballGroup.position.z + this.ballOptions.speedZ <= this.mapData.stage3.g_end.z)){
                     this.branchSelector.$dom.hide()
                     //左拐
-                    if( this.ballMesh.position.x <= this.mapData.stage3.g_end.x ){
+                    if( this.ballGroup.position.x <= this.mapData.stage3.g_end.x ){
                         var dir = 'left'
                     }
                     //右拐
@@ -3551,9 +3711,9 @@ webgl.render = function(){
                 break;
             case "stage4":
                 this.ballRender();
-                this.getViewSpeed();
+                // this.getViewSpeed();
                 this.setCameraFollowBall();
-                if( this.ballMesh.position.z <= this.mapData.stage4.g_distance.z ){
+                if( this.ballGroup.position.z <= this.mapData.stage4.g_distance.z ){
                     this.gravity.allow = false
                     this.ballScrollTo(new THREE.Vector3().copy( this.mapData.stage4.g_end ), 3, function(){
                         _this.gameState = _this.state.end
@@ -3582,7 +3742,7 @@ webgl.render = function(){
                 break;
             case "bump":
                 this.ballRender();
-                this.getViewSpeed()
+                // this.getViewSpeed()
                 this.setCameraFollowBall()
                 break;
             case "end":
@@ -3710,10 +3870,10 @@ var main = new function(){
             url:this.picUrl+"ball.png",
             group:"girl"
         },
-        {
-            url:this.picUrl+"floor.jpg",
-            group:"floor"
-        },
+        // {
+        //     url:this.picUrl+"floor.jpg",
+        //     group:"floor"
+        // },
         {
             url:this.modelUrl+"bridge.jpg",
             group:"bridgeSkin"
@@ -3729,6 +3889,14 @@ var main = new function(){
         {
             url:this.picUrl+"shadow.png",
             group:"shadow"
+        },
+        {
+            url:this.picUrl+"outer.png",
+            group:"border"
+        },
+        {
+            url:this.picUrl+"light.png",
+            group:"light"
         },
 
 
@@ -4096,6 +4264,303 @@ var main = new function(){
             url:this.picUrl+"weile.png",
             group:"1"
         },
+        {
+            url:this.picUrl+"b_1.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"b_1_2.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"b_2.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"b_3.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"b_4.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"b_4_1.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"b_5.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"b_6.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"b_7.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"b_8.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"g_1.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"g_2.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p2_img_0.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p2_img_01.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p3.jpg",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p3_01.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p3_01_1.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p3_01_2.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p3_01_3.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p3_02.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p3_03.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p3_bg.jpg",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p3_img_10.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p4_01.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p4_02.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p4_03.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p4_04.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p4_05.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p4_bg.jpg",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p5_01.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p5_img_0.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p6_01.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p6_02.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p6_03.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p6_04.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p6_05.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p6_06.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p6_07.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p6_08.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p6_09.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p7_01.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p7_01_1.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p7_01_2.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p7_01_3.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p7_02.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p7_02_0.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p7_02_1.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p7_02_2.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p7_02_3.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p7_03.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p7_03_0.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p7_03_1.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p7_03_2.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p7_03_3.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p8_01.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p8_02.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p9_01.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p9_02.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p9_03.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p9_04.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p9_05.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p9_05_1.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p9_06.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p9_07.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p9_07_1.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p9_07_2.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p9_07_3.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p9_07_4.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p9_08.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p9_09.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p9_bg.jpg",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p10_02.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p10_03.png",
+            group:"1"
+        },
+        {
+            url:this.picUrl+"p11_01.png",
+            group:"1"
+        },
+
     ];
     this.ImageResult = {};
 
@@ -4160,6 +4625,7 @@ main.start=function(){
                 },
                 function( result ){
 
+                    Utils.lazyLoad()
                     //黄色球纹理
                     t = new THREE.Texture( result['girl'][0] )
                     t.needsUpdate = true
@@ -4206,7 +4672,6 @@ main.loadCallBack = function(){
 
 
     // vm.pwebgl.visible = true;
-
     setTimeout( function(){
         $(".P_loading").fo()
         vm.p1.visible = true;
@@ -4226,13 +4691,22 @@ main.loadCallBack = function(){
 
 };
 main.gameEnd = function(){
+
     window.removeEventListener( "orientationchange", onOrientChange2 )
     window.addEventListener( "orientationchange", onOrientChange3 )
 
-    $(".reason-btn").show()
-    $(".rule-btn").hide()
-
+    //关闭计时器
     clearInterval( webgl.timer.id )
+
+    //结束时间设置
+    var time = parseInt( webgl.timer.dom1.html() )
+    $(".result-box span").html( time )
+
+    //调出top按钮
+    $(".reason-btn").show()
+    // $(".rule-btn").hide()
+
+
 }
 main.prule = function(){
     $(".P_rule").fi();
@@ -4277,7 +4751,7 @@ main.pausebgm=function(){
 };
 main.startRender = function(){
     var loop = function(){
-        main.RAF = window.requestAnimationFrame(loop)
+        main.RAF = window.requestAnimationFrame( loop )
         three.render();
         webgl.render();
     };

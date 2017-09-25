@@ -17,9 +17,6 @@
         css = '<'+'link '+'href='+"css/animate.css?v"+Math.random()+' rel='+"stylesheet "+'type='+"text/css"+'>';
         document.write(css);
     </script>
-    <style>
-        .dg.main.a{width:3.2rem !important;}
-    </style>
     <title>财富焦虑PK大赛</title>
 </head>
 <body>
@@ -50,118 +47,47 @@
         <img class="text" src="assets/images/p1_01.png">
     </div>
 </div>
-<style>
-    .P_loading{}
-        .P_loading .loading-box{width:100%;top:3.5rem;left:50%;margin-left:-3.2rem;position: absolute;}
-        .loading-box .fish{width:6.4rem;height:2.08rem;top:0;position:relative;background-image:url("assets/images/p1.jpg");background-repeat: no-repeat;background-size:19.2rem 2.08rem;}
-        .loading-box .number-box{width:100%;text-align: center;word-spacing:-0.2rem;}
-            .number-box .static{ position:static }
-            .number-box .number{ display:inline-block;}
-                .number img{width:0.38rem;}
 
-        .loading-box .text{position: relative;width:1.36rem;margin:0.24rem auto;}
-</style>
-
-<style>
-    .P1{}
-        .p1-bg{z-index:-1;width:100%;bottom:0}
-        .p1-1{width:0.97rem;left:1rem;bottom:1rem;}
-        .p1-2{width:0.76rem;left:50%;top:4.5rem;margin-left:-0.38rem;z-index:2;}
-        .p1-3{width:6.5rem;left:50%;top:0.5rem;margin-left:-3.25rem;}
-        .p1-4{width:5.38rem;height:2.9rem;position: absolute;left:50%;margin-left:-2.69rem;top:2.2rem;background-image: url("./assets/images/p3.jpg");background-repeat: no-repeat;background-size: 16.14rem 2.9rem;}
-        .p1-5{width:2.5rem;position: absolute;right:1rem;bottom:-0.1rem;}
-        .p1-6{width:2rem;position: absolute;right:-0.8rem;bottom:0.7rem;}
-        .p1-7{width:1.73rem;position: absolute;right:-0.9rem;bottom:-0.3rem;}
-    .top{width:100%;position:absolute;padding:0.2rem;z-index:100;}
-        .top .reason-btn{width:1.11rem;position: static;float:left;}
-        .top .music-btn{width:0.36rem;position: static;float:right;margin:0.1rem;}
-        .top .rule-btn{width:0.36rem;position: static;float:right;margin:0.08rem;}
-</style>
-
-<style>
-    .P2{}
-        .P2 .bg-pic{z-index:-1;width:100%;bottom:0;}
-        .P2 .p2-pic1{width:3.52rem;left:50%;margin-left:-1.76rem;top:0.4rem;}
-        .P2 .chose-box{width:5.7rem;left:50%;margin-left:-2.85rem;top:2rem;position:absolute;}
-            .chose-box .sex-box{left:0;}
-            .chose-box .girl-box{float:left;}
-            .chose-box .boy-box{float:right;}
-                .sex-box .girl{width:1.75rem;position: relative;}
-                .sex-box .boy{width:2.5rem;position: relative;}
-                .sex-box .sex-txt{width:1rem;position:static;margin:0 auto;}
-
-</style>
-
-<style>
-    .P_result{}
-        .result-bg{ width:100%; z-index:-1; }
-        .result-box{ width:2.28rem;height:0.75rem;position:absolute;left:50%;margin-left:-1.14rem;top:0.7rem;}
-        .result-box img{ width:100% }
-
-        .text-box{ width:3.06rem;height:0.76rem;position:absolute;top:2.1rem;left:50%;margin-left:-1.53rem; }
-        .text-box .t-bg{ width:100%; }
-        .text-box .text{ left: 1.25rem; top: -0.13rem; width: 1.6rem; }
-
-        .P_result .title{width:4.58rem;left:50%;margin-left:-2.29rem;top:3.5rem;}
-        .red-box{width:2.86rem;height:0.7rem;position: absolute;left:50%;margin-left:-1.43rem;top:5.94rem;}
-            .red-box .red1{width:0.62rem;top:-0.4rem;right:0.2rem;z-index:1;}
-            .red-box .red2{width:100%;}
-        .P_result .btn-group{width:3rem;height:0.9rem;position: absolute;left:50%;margin-left:-1.5rem;top:7.15rem;}
-            .btn-group .btn1{width:0.94rem;left:0;}
-            .btn-group .btn2{width:0.94rem;right:0;}
-        .P_result .p1{left:2.55rem;top:8.4rem;width:1.77rem;}
-        .P_result .p2{right:0.3rem;top:8.5rem;width:2.53rem;}
-
-        .P_board{background-color:rgba(0,0,0,0.8);z-index:102;}
-        .P_board .content-box{width:5.22rem;height:7.46rem;position:absolute;left:50%;margin-left:-2.61rem;top:1.46rem;}
-            .content-box .board-bg{ width:100%; }
-            .content-box .board-xx{ width:0.5rem;right:0.1rem;top:-0.6rem; }
-            .content-box .circle1{ width:1.8rem;left:0.94rem;top:2.3rem; }
-            .content-box .circle2{ width:1.14rem;left:3.14rem;top:2.4rem; }
-            .content-box .circle3{ width:1.4rem;left:2.75rem;top:4rem; }
-            .content-box .circle4{ width:1.4rem;left:1.13rem;top:4.8rem; }
-
-</style>
 <div id="iCreative" style="z-index:1">
     <!--top-->
     <transition enter-active-class="ani-fadeIn" leave-active-class="ani-fadeOut">
         <div class="top" v-show="top.visible" style="display:none;">
-            <img  class="reason-btn" src="assets/images/p9_09.png" @touchend="top_btn_reason" style="display:none;">
-            <img class="rule-btn" src="assets/images/g_1.png" @touchend="top_btn_rule">
-            <img class="music-btn" src="assets/images/g_2.png" @touchend="top_btn_music">
+            <img  class="reason-btn lazy" data-src="assets/images/p9_09.png" @touchend="top_btn_reason" style="display:none;">
+            <img class="rule-btn lazy" data-src="assets/images/g_1.png" @touchend="top_btn_rule" style="display:none;">
+            <img class="music-btn lazy" data-src="assets/images/g_2.png" @touchend="top_btn_music">
         </div>
     </transition>
 
     <!--p1-->
     <transition enter-active-class="ani-fadeIn" leave-active-class="ani-fadeOut" @before-enter="onBeforeP1Enter">
         <div class="container P1" v-show="p1.visible" style="display:none;">
-            <img class="p1-bg" src="assets/images/p3_bg.jpg">
-            <img class="p1-1" src="assets/images/p3_01.png">
-            <img class="p1-2" src="assets/images/p3_02.png" @touchend.once="p1_btn_start">
-            <img class="p1-3" src="assets/images/p3_03.png">
+            <img class="p1-bg lazy" data-src="assets/images/p3_bg.jpg">
+            <img class="p1-1 lazy" data-src="assets/images/p3_01.png">
+            <img class="p1-2 lazy" data-src="assets/images/p3_02.png" @touchend.once="p1_btn_start">
+            <img class="p1-3 lazy" data-src="assets/images/p3_03.png">
             <div class="p1-4 ani-p1-fish" @touchend.once="p1_btn_start"></div>
 
-            <img class="p1-5 opacity ani-slideFromRight ani-time06" src="assets/images/p3_01_1.png">
-            <img class="p1-6 opacity ani-slideFromDown ani-time06" src="assets/images/p3_01_2.png">
-            <img class="p1-7 opacity ani-fadeIn ani-time06" src="assets/images/p3_01_3.png">
+            <img class="p1-5 opacity ani-slideFromRight ani-time06 lazy" data-src="assets/images/p3_01_1.png">
+            <img class="p1-6 opacity ani-slideFromDown ani-time06 lazy" data-src="assets/images/p3_01_2.png">
+            <img class="p1-7 opacity ani-fadeIn ani-time06 lazy" data-src="assets/images/p3_01_3.png">
         </div>
     </transition>
 
     <!--p2-->
     <transition enter-active-class="ani-fadeIn" leave-active-class="ani-fadeOut">
         <div class="container P2" v-show="p2.visible" style="display:none;">
-            <img class="bg-pic" src="assets/images/p4_bg.jpg">
+            <img class="bg-pic lazy" data-src="assets/images/p4_bg.jpg">
 
-            <img class="p2-pic1" src="assets/images/p4_05.png">
+            <img class="p2-pic1 lazy" data-src="assets/images/p4_05.png">
 
             <div class="chose-box">
                 <div class="sex-box girl-box">
-                    <img class="girl" src="assets/images/p4_04.png" @touchstart="btn_pressDown( $event )" @touchend.once="p1BtnChoseSex( 0, $event )">
-                    <img class="sex-txt" src="assets/images/p4_02.png">
+                    <img class="girl lazy" data-src="assets/images/p4_04.png" @touchstart="btn_pressDown( $event )" @touchend.once="p1BtnChoseSex( 0, $event )">
+                    <img class="sex-txt lazy" data-src="assets/images/p4_02.png">
                 </div>
                 <div class="sex-box boy-box">
-                    <img class="boy" src="assets/images/p4_03.png" @touchstart="btn_pressDown( $event )" @touchend.once="p1BtnChoseSex( 1,$event )">
-                    <img class="sex-txt" src="assets/images/p4_01.png">
+                    <img class="boy lazy" data-src="assets/images/p4_03.png" @touchstart="btn_pressDown( $event )" @touchend.once="p1BtnChoseSex( 1,$event )">
+                    <img class="sex-txt lazy" data-src="assets/images/p4_01.png">
                 </div>
 
 
@@ -173,10 +99,10 @@
     <transition enter-active-class="ani-fadeIn" leave-active-class="ani-fadeOut">
         <div class="container P_webgl" v-show="pwebgl.visible" style="display:none;">
             <div class="scene-bg-box">
-                <img src="assets/images/stage1/scenebg0.jpg" class="scene-bg scene-bg0">
-                <img src="assets/images/stage1/p3_img_bg.jpg" class="scene-bg scene-bg1" style="display: none;">
-                <img src="assets/images/p2_img_0.png" class="scene-bg scene-bg2" style="display: none;">
-                <img src="assets/images/p5_img_0.png" class="scene-bg scene-bg3" style="display: none;">
+                <img data-src="assets/images/stage1/scenebg0.jpg" class="scene-bg scene-bg0 lazy">
+                <img data-src="assets/images/stage1/p3_img_bg.jpg" class="scene-bg scene-bg1 lazy" style="display: none;">
+                <img data-src="assets/images/p2_img_0.png" class="scene-bg scene-bg2 lazy" style="display: none;">
+                <img data-src="assets/images/p5_img_0.png" class="scene-bg scene-bg3 lazy" style="display: none;">
             </div>
             <div id="WebGL" class="gl-container">
                 <div id="FPS"></div>
@@ -186,29 +112,29 @@
 
             <!--玩法提示 11-->
             <div class="tip-mask" style="position:absolute;width:100%;height:100%;z-index:11;display:none;background-color:rgba(0,0,0,0.8)" @touchend.once="pwebgl_btn_closeTip">
-                <img src="assets/images/p5_01.png" style="width:5rem;height:2.05rem;left:50%;margin-left:-2.5rem;top:50%;margin-top:-1rem;">
+                <img class="lazy" data-src="assets/images/p5_01.png" style="width:5rem;height:2.05rem;left:50%;margin-left:-2.5rem;top:50%;margin-top:-1rem;">
             </div>
 
             <!--左右选择 10-->
             <div class="tip-box">
                 <div class="arrow-box arrow-box1" style="display:none;">
-                    <img src="assets/images/p7_01.png" class="tip-tile" v-show="userData.stage=='stage0'">
-                    <img src="assets/images/p7_01_1.png" class="tip-tile" v-show="userData.stage=='stage1'">
-                    <img src="assets/images/p7_01_2.png" class="tip-tile" v-show="userData.stage=='stage2'">
-                    <img src="assets/images/p7_01_3.png" class="tip-tile" v-show="userData.stage=='stage3'">
+                    <img data-src="assets/images/p7_01.png" class="tip-tile lazy" v-show="userData.stage=='stage0'">
+                    <img data-src="assets/images/p7_01_1.png" class="tip-tile lazy" v-show="userData.stage=='stage1'">
+                    <img data-src="assets/images/p7_01_2.png" class="tip-tile lazy" v-show="userData.stage=='stage2'">
+                    <img data-src="assets/images/p7_01_3.png" class="tip-tile lazy" v-show="userData.stage=='stage3'">
                     <div class="btn btn1" >
-                        <img src="assets/images/p7_02.png" class="arr" @touchend="webgl_btn_chose('left')">
-                        <img src="assets/images/p7_02_0.png" class="txt" v-show="userData.stage=='stage0'">
-                        <img src="assets/images/p7_02_1.png" class="txt" v-show="userData.stage=='stage1'">
-                        <img src="assets/images/p7_02_2.png" class="txt" v-show="userData.stage=='stage2'">
-                        <img src="assets/images/p7_02_3.png" class="txt" v-show="userData.stage=='stage3'">
+                        <img data-src="assets/images/p7_02.png" class="arr lazy" @touchend="webgl_btn_chose('left')">
+                        <img data-src="assets/images/p7_02_0.png" class="txt lazy" v-show="userData.stage=='stage0'">
+                        <img data-src="assets/images/p7_02_1.png" class="txt lazy" v-show="userData.stage=='stage1'">
+                        <img data-src="assets/images/p7_02_2.png" class="txt lazy" v-show="userData.stage=='stage2'">
+                        <img data-src="assets/images/p7_02_3.png" class="txt lazy" v-show="userData.stage=='stage3'">
                     </div>
                     <div class="btn btn2">
-                        <img src="assets/images/p7_03.png" class="arr"  @touchend="webgl_btn_chose('right')">
-                        <img src="assets/images/p7_03_0.png" class="txt" v-show="userData.stage=='stage0'">
-                        <img src="assets/images/p7_03_1.png" class="txt" v-show="userData.stage=='stage1'">
-                        <img src="assets/images/p7_03_2.png" class="txt" v-show="userData.stage=='stage2'">
-                        <img src="assets/images/p7_03_3.png" class="txt" v-show="userData.stage=='stage3'">
+                        <img data-src="assets/images/p7_03.png" class="arr lazy"  @touchend="webgl_btn_chose('right')">
+                        <img data-src="assets/images/p7_03_0.png" class="txt lazy" v-show="userData.stage=='stage0'">
+                        <img data-src="assets/images/p7_03_1.png" class="txt lazy" v-show="userData.stage=='stage1'">
+                        <img data-src="assets/images/p7_03_2.png" class="txt lazy" v-show="userData.stage=='stage2'">
+                        <img data-src="assets/images/p7_03_3.png" class="txt lazy" v-show="userData.stage=='stage3'">
                     </div>
                 </div>
                 <!--<div class="arrow-box arrow-box2" style="display:none;">-->
@@ -230,13 +156,13 @@
 
             <!--计时器 9-->
             <div class="time-box">
-                <img src="assets/images/p9_08.png" class="time-bg">
+                <img data-src="assets/images/p9_08.png" class="time-bg lazy">
                 <span class="time-txt">0</span>
             </div>
 
             <!--说话老头 10-->
             <div class="npc ani-npc transition" style="display:none;">
-                <img class="dialog opacity delay05 ani-fadeIn" src="assets/images/p6_02.png">
+                <img class="dialog opacity delay05 ani-fadeIn lazy" data-src="assets/images/p6_02.png">
             </div>
 
         </div>
@@ -245,32 +171,32 @@
     <!--结果页-->
     <transition enter-active-class="ani-fadeIn" leave-active-class="ani-fadeOut">
         <div class="container P_result" v-show="presult.visible" style="display:none;">
-            <img class="result-bg" src="assets/images/p9_bg.jpg">
+            <img class="result-bg lazy" data-src="assets/images/p9_bg.jpg">
             <div class="result-box">
-                <img src="assets/images/p9_08.png" class="lazy">
+                <img data-src="assets/images/p9_08.png" class="lazy">
                 <span style="color:#64381f;font-size:0.4rem;font-family: Arial;position:absolute;width:0.6rem;height:0.75rem;right:0.3rem;text-align:center;line-height:0.95rem;">20</span>
             </div>
 
             <div class="text-box">
-                <img src="assets/images/p9_07.png" class="t-bg">
-                <img src="assets/images/p9_07_1.png" class="text">
+                <img data-src="assets/images/p9_07.png" class="t-bg lazy">
+                <img data-src="assets/images/p9_07_1.png" class="text lazy">
                 <span style="color: rgb(127, 150, 122);font-size: 0.4rem;font-family: Arial;position: absolute;width: 1.6rem;bottom: 0;left: 0.9rem;height: 0.3rem;text-align: center;line-height: 0.3rem;">75%</span>
             </div>
 
-            <img src="assets/images/p9_06.png" class="title">
+            <img data-src="assets/images/p9_06.png" class="title lazy">
 
             <div class="red-box">
-                <img src="assets/images/p9_05.png" class="red1">
-                <img src="assets/images/p9_05_1.png" class="red2">
+                <img data-src="assets/images/p9_05.png" class="red1 lazy">
+                <img data-src="assets/images/p9_05_1.png" class="red2 lazy">
             </div>
 
             <div class="btn-group">
-                <img src="assets/images/p9_04.png" class="btn1" @touchend="presult_btn_again">
-                <img src="assets/images/p9_03.png" class="btn2" @touchend="presult_btn_share">
+                <img data-src="assets/images/p9_04.png" class="btn1 lazy" @touchend="presult_btn_again">
+                <img data-src="assets/images/p9_03.png" class="btn2 lazy" @touchend="presult_btn_share">
             </div>
 
-            <img src="assets/images/p9_01.png" class="p1">
-            <img src="assets/images/p9_02.png" class="p2">
+            <img data-src="assets/images/p9_01.png" class="p1 lazy">
+            <img data-src="assets/images/p9_02.png" class="p2 lazy">
 
         </div>
     </transition>
@@ -279,17 +205,17 @@
     <transition enter-active-class="ani-fadeIn" leave-active-class="ani-fadeOut">
         <div class="container P_board" v-show="pboard.visible" style="display:none;">
             <div class="content-box">
-                <img src="assets/images/p10_02.png" class="board-bg">
-                <img src="assets/images/p10_03.png" class="board-xx" @touchend="pboard_btn_close">
+                <img data-src="assets/images/p10_02.png" class="board-bg lazy">
+                <img data-src="assets/images/p10_03.png" class="board-xx lazy" @touchend="pboard_btn_close">
 
-                <img src="assets/images/b_1.png" class="circle1" v-show="userData.chose[0] == 'left'">
-                <img src="assets/images/b_1_2.png" class="circle1" v-show="userData.chose[0] == 'right'">
-                <img src="assets/images/b_4.png" class="circle2" v-show="userData.chose[1] == 'left'">
-                <img src="assets/images/b_4_1.png" class="circle2" v-show="userData.chose[1] == 'right'">
-                <img src="assets/images/b_5.png" class="circle3" v-show="userData.chose[2] == 'left'">
-                <img src="assets/images/b_6.png" class="circle3" v-show="userData.chose[2] == 'right'">
-                <img src="assets/images/b_7.png" class="circle4" v-show="userData.chose[3] == 'left'">
-                <img src="assets/images/b_8.png" class="circle4" v-show="userData.chose[3] == 'right'">
+                <img data-src="assets/images/b_1.png" class="circle1 lazy" v-show="userData.chose[0] == 'left'">
+                <img data-src="assets/images/b_1_2.png" class="circle1 lazy" v-show="userData.chose[0] == 'right'">
+                <img data-src="assets/images/b_4.png" class="circle2 lazy" v-show="userData.chose[1] == 'left'">
+                <img data-src="assets/images/b_4_1.png" class="circle2 lazy" v-show="userData.chose[1] == 'right'">
+                <img data-src="assets/images/b_5.png" class="circle3 lazy" v-show="userData.chose[2] == 'left'">
+                <img data-src="assets/images/b_6.png" class="circle3 lazy" v-show="userData.chose[2] == 'right'">
+                <img data-src="assets/images/b_7.png" class="circle4 lazy" v-show="userData.chose[3] == 'left'">
+                <img data-src="assets/images/b_8.png" class="circle4 lazy" v-show="userData.chose[3] == 'right'">
             </div>
         </div>
     </transition>
@@ -297,7 +223,7 @@
     <!--分享页-->
     <transition enter-active-class="ani-fadeIn" leave-active-class="ani-fadeOut">
         <div class="container P_share" v-show="pshare.visible" style="display:none;background-color:rgba(0,0,0,0.8);z-index:102;" @touchend="pshare.visible = false">
-            <img class="share-pic" src="assets/images/p11_01.png" style="width:3.93rem;right:0.5rem;top:0.2rem;">
+            <img class="share-pic lazy" data-src="assets/images/p11_01.png" style="width:3.93rem;right:0.5rem;top:0.2rem;">
         </div>
     </transition>
 
@@ -318,14 +244,14 @@
 <!--要求横屏-->
 <div class="sp container" style="display:none;">
     <!--<img src="assets/images/hp_ts.png" class="sp-pic">-->
-    <img src="assets/images/p1_bg.jpg" class="sp-bg">
-    <img src="assets/images/p2_img_01.png" class="sp-pic">
+    <img data-src="assets/images/p1_bg.jpg" class="sp-bg lazy">
+    <img data-src="assets/images/p2_img_01.png" class="sp-pic lazy">
 </div>
 
 <!--竖屏查看结果-->
 <div class="tip-sp" style="display:none;">
-    <img src="assets/images/p8_01.png" class="pic1">
-    <img src="assets/images/p8_02.png" class="pic2">
+    <img data-src="assets/images/p8_01.png" class="pic1 lazy">
+    <img data-src="assets/images/p8_02.png" class="pic2 lazy">
 </div>
 
 <!--<audio id="bgm" src="music/music.mp3?v1" preload="auto" loop="true" class="iosPreload"></audio>-->

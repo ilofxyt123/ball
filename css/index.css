@@ -49,6 +49,7 @@ img{position: absolute;}
     .tip-sp .pic1{width:2.28rem;left:50%;margin-left:-1.14rem;top:2.8rem;}
     .tip-sp .pic2{width:5.34rem;left:50%;margin-left:-2.67rem;top:0.8rem;}
 
+.dg.main.a{width:3.2rem !important;}
 
 .input-box{width:100%;}
     .input-box input{display:block;width:100%;height:0.6rem;border:none;outline:none;background-color:rgba(0,0,0,0);padding:0.17rem;text-align:center;margin:0;font-size:0.26rem;}
@@ -95,3 +96,66 @@ img{position: absolute;}
                 .paddress-box .province{width:1.72rem;height:0.54rem;left:0;}
                 .paddress-box .city{width:1.72rem;height:0.54rem;right:0;}
                 .paddress-box .address{height:0.54rem;}
+
+    .P_result{}
+        .result-bg{ width:100%; z-index:-1; }
+        .result-box{ width:2.28rem;height:0.75rem;position:absolute;left:50%;margin-left:-1.14rem;top:0.7rem;}
+        .result-box img{ width:100% }
+
+        .text-box{ width:3.06rem;height:0.76rem;position:absolute;top:2.1rem;left:50%;margin-left:-1.53rem; }
+        .text-box .t-bg{ width:100%; }
+        .text-box .text{ left: 1.25rem; top: -0.13rem; width: 1.6rem; }
+
+    .P_result .title{width:4.58rem;left:50%;margin-left:-2.29rem;top:3.5rem;}
+    .red-box{width:2.86rem;height:0.7rem;position: absolute;left:50%;margin-left:-1.43rem;top:5.94rem;}
+        .red-box .red1{width:0.62rem;top:-0.4rem;right:0.2rem;z-index:1;}
+        .red-box .red2{width:100%;}
+    .P_result .btn-group{width:3rem;height:0.9rem;position: absolute;left:50%;margin-left:-1.5rem;top:7.15rem;}
+        .btn-group .btn1{width:0.94rem;left:0;}
+        .btn-group .btn2{width:0.94rem;right:0;}
+    .P_result .p1{left:2.55rem;top:8.4rem;width:1.77rem;}
+    .P_result .p2{right:0.3rem;top:8.5rem;width:2.53rem;}
+
+    .P_board{background-color:rgba(0,0,0,0.8);z-index:102;}
+    .P_board .content-box{width:5.22rem;height:7.46rem;position:absolute;left:50%;margin-left:-2.61rem;top:1.46rem;}
+        .content-box .board-bg{ width:100%; }
+        .content-box .board-xx{ width:0.5rem;right:0.1rem;top:-0.6rem; }
+        .content-box .circle1{ width:1.8rem;left:0.94rem;top:2.3rem; }
+        .content-box .circle2{ width:1.14rem;left:3.14rem;top:2.4rem; }
+        .content-box .circle3{ width:1.4rem;left:2.75rem;top:4rem; }
+        .content-box .circle4{ width:1.4rem;left:1.13rem;top:4.8rem; }
+
+     .P2{}
+        .P2 .bg-pic{z-index:-1;width:100%;bottom:0;}
+        .P2 .p2-pic1{width:3.52rem;left:50%;margin-left:-1.76rem;top:0.4rem;}
+        .P2 .chose-box{width:5.7rem;left:50%;margin-left:-2.85rem;top:2rem;position:absolute;}
+            .chose-box .sex-box{left:0;}
+            .chose-box .girl-box{float:left;}
+            .chose-box .boy-box{float:right;}
+                .sex-box .girl{width:1.75rem;position: relative;}
+                .sex-box .boy{width:2.5rem;position: relative;}
+                .sex-box .sex-txt{width:1rem;position:static;margin:0 auto;}
+
+     .P1{}
+        .p1-bg{z-index:-1;width:100%;bottom:0}
+        .p1-1{width:0.97rem;left:1rem;bottom:1rem;}
+        .p1-2{width:0.76rem;left:50%;top:4.5rem;margin-left:-0.38rem;z-index:2;}
+        .p1-3{width:6.5rem;left:50%;top:0.5rem;margin-left:-3.25rem;}
+        .p1-4{width:5.38rem;height:2.9rem;position: absolute;left:50%;margin-left:-2.69rem;top:2.2rem;background-image: url("../assets/images/p3.jpg");background-repeat: no-repeat;background-size: 16.14rem 2.9rem;}
+        .p1-5{width:2.5rem;position: absolute;right:1rem;bottom:-0.1rem;}
+        .p1-6{width:2rem;position: absolute;right:-0.8rem;bottom:0.7rem;}
+        .p1-7{width:1.73rem;position: absolute;right:-0.9rem;bottom:-0.3rem;}
+    .top{width:100%;position:absolute;padding:0.2rem;z-index:100;}
+        .top .reason-btn{width:1.11rem;position: static;float:left;}
+        .top .music-btn{width:0.36rem;position: static;float:right;margin:0.1rem;}
+        .top .rule-btn{width:0.36rem;position: static;float:right;margin:0.08rem;}
+
+     .P_loading{}
+        .P_loading .loading-box{width:100%;top:3.5rem;position: absolute;}
+        .loading-box .fish{width:6.4rem;height:2.08rem;top:0;position:relative;margin:0 auto;background-image:url("../assets/images/p1.jpg");background-repeat: no-repeat;background-size:19.2rem 2.08rem;}
+        .loading-box .number-box{width:100%;text-align: center;word-spacing:0;}
+            .number-box .static{ position:static }
+            .number-box .number{ display:inline-block;margin:0 -0.03rem}
+                .number img{width:0.38rem;}
+
+        .loading-box .text{position: relative;width:1.36rem;margin:0.24rem auto;}

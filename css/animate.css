@@ -283,7 +283,7 @@
 
 .ani-p1-fish{
     -webkit-animation-name:ani-p1-fish;
-    -webkit-animation-duration: 1s;
+    -webkit-animation-duration: 1.5s;
     /*-webkit-animation-timing-function: linear;*/
     -webkit-animation-timing-function: steps(3,end);
     /*-webkit-animation-delay: 2s;*/
@@ -292,7 +292,7 @@
     -webkit-animation-play-state: running;
 
     animation-name:ani-p1-fish;
-    animation-duration: 1s;
+    animation-duration: 1.5s;
     /*animation-timing-function: linear;*/
     animation-timing-function: steps(3,end);
     /*animation-delay: 2s;*/
