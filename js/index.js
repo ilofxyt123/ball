@@ -1333,8 +1333,8 @@ var webgl = new function(){
             start:new THREE.Vector3( 0, 0, 0 ),//内部起点
             end:new THREE.Vector3( 0, 0, -243 ),//内部终点
             g_end:new THREE.Vector3(0, 0, -243),//全局end
-            distance:new THREE.Vector3( 0, 0, -120 ),//内部distance
-            g_distance:new THREE.Vector3( 0, 0, -120 ),//全局减速点
+            distance:new THREE.Vector3( 0, 0, -80 ),//内部distance
+            g_distance:new THREE.Vector3( 0, 0, -80 ),//全局减速点
             dir:undefined,
             roadFBXGroup:undefined,
             builder:{
@@ -1909,6 +1909,7 @@ webgl.init = function(){
         // depthWrite:false
         // depthTest:false,
     })
+
     for( var prop in this.FBXData ){
         loadFBX( _this.FBXData[ prop ] )
     }
@@ -2468,19 +2469,21 @@ webgl.initCacheData = function(){
                     isStone = true
                     scale = new THREE.Vector3().copy( data[ name ].scale ).multiplyScalar( 0.1 )
 
-                    var geo = three.getPlaneGeo({
-                        width:data[ name ].width,
-                        height:scale.y,
-                        Ws:10,
-                        Hs:10
-                    })
-                    var material = new THREE.MeshBasicMaterial({
-                        wireframe:true,
-                        color:0xff0000
-                    })
-                    var stone = new THREE.Mesh( geo, material )
-                    stone.position.copy( position )
-                    group.add( stone )
+                    //红色线框
+                    // var geo = three.getPlaneGeo({
+                    //     width:data[ name ].width,
+                    //     height:scale.y,
+                    //     Ws:10,
+                    //     Hs:10
+                    // })
+                    // var material = new THREE.MeshBasicMaterial({
+                    //     wireframe:true,
+                    //     color:0xff0000
+                    // })
+                    // var stone = new THREE.Mesh( geo, material )
+                    // stone.position.copy( position )
+                    // group.add( stone )
+
                     // data[ name ].scale.multiplyScalar( 0.1 )
                 }else{
                     texture = data[ name ].texture;
@@ -2557,7 +2560,7 @@ webgl.initBall = function( callback ){
     });
 
     var t = option.texture[ vm.userData.sex ]
-    var m = new THREE.MeshPhongMaterial({map:t,transparent:true})
+    var m = new THREE.MeshLambertMaterial({map:t,transparent:true})
     var mesh = new THREE.Mesh( g, m )
 
     mesh.position.set( option.startPosition.x, option.startPosition.y, option.startPosition.z )
@@ -3384,6 +3387,21 @@ webgl.render = function(){
                 this.ballRender();
                 this.getViewSpeed()
                 this.setCameraFollowBall()
+                //出提示的点
+                if( (this.ballMesh.position.z > this.mapData.stage0.g_distance.z) &&(this.ballMesh.position.z + this.ballOptions.speedZ <= this.mapData.stage0.g_distance.z)){
+                    // this.gravity.allow = false
+                    // this.ballScrollTo(new THREE.Vector3().copy( this.mapData.stage0.g_end ), 3, function(){
+                    //     _this.gameState = _this.state.waitChose;
+                    //     $(".arrow-box").fi();
+                    // })
+                    // this.gameState = this.state.slowDown
+
+
+                    if( !this.branchSelector.stage0.haveShow ){
+                        this.branchSelector.$dom.fi()
+                        this.branchSelector.stage0.haveShow = true
+                    }
+                }
                 break;
             case "stage0":
                 this.ballRender();
@@ -3397,6 +3415,7 @@ webgl.render = function(){
                     //     $(".arrow-box").fi();
                     // })
                     // this.gameState = this.state.slowDown
+
 
                     if( !this.branchSelector.stage0.haveShow ){
                         this.branchSelector.$dom.fi()
@@ -3684,11 +3703,11 @@ var main = new function(){
         //     group:"girl"
         // },
         {
-            url:this.picUrl+"testBoy.png",
+            url:this.picUrl+"ball.png",
             group:"boy"
         },
         {
-            url:this.picUrl+"testGirl.jpg",
+            url:this.picUrl+"ball.png",
             group:"girl"
         },
         {
@@ -3700,16 +3719,16 @@ var main = new function(){
             group:"bridgeSkin"
         },
         {
-            url:this.picUrl+"bg.jpg",
-            group:"1"
-        },
-        {
             url:this.picUrl+"stone.png",
             group:"stone"
         },
         {
             url:this.picUrl+"pf.jpg",
             group:"skin"
+        },
+        {
+            url:this.picUrl+"shadow.png",
+            group:"shadow"
         },
 
 
@@ -3766,7 +3785,6 @@ var main = new function(){
             url:this.picUrl+"stage1/scenebg0.jpg",
             group:"stage1",
         },
-
 
         //stage1 right
         {

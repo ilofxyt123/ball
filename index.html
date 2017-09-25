@@ -20,7 +20,7 @@
     <style>
         .dg.main.a{width:3.2rem !important;}
     </style>
-    <title>vue</title>
+    <title>财富焦虑PK大赛</title>
 </head>
 <body>
 
@@ -282,14 +282,14 @@
                 <img src="assets/images/p10_02.png" class="board-bg">
                 <img src="assets/images/p10_03.png" class="board-xx" @touchend="pboard_btn_close">
 
-                <img src="assets/images/p10_01.png" class="circle1" v-show="userData.chose[0] == 'left'">
-                <img src="assets/images/p10_01.png" class="circle1" v-show="userData.chose[0] == 'right'">
-                <img src="assets/images/p10_01.png" class="circle2" v-show="userData.chose[1] == 'left'">
-                <img src="assets/images/p10_01.png" class="circle2" v-show="userData.chose[1] == 'right'">
-                <img src="assets/images/p10_01.png" class="circle3" v-show="userData.chose[2] == 'left'">
-                <img src="assets/images/p10_01.png" class="circle3" v-show="userData.chose[2] == 'right'">
-                <img src="assets/images/p10_01.png" class="circle4" v-show="userData.chose[3] == 'left'">
-                <img src="assets/images/p10_01.png" class="circle4" v-show="userData.chose[3] == 'right'">
+                <img src="assets/images/b_1.png" class="circle1" v-show="userData.chose[0] == 'left'">
+                <img src="assets/images/b_1_2.png" class="circle1" v-show="userData.chose[0] == 'right'">
+                <img src="assets/images/b_4.png" class="circle2" v-show="userData.chose[1] == 'left'">
+                <img src="assets/images/b_4_1.png" class="circle2" v-show="userData.chose[1] == 'right'">
+                <img src="assets/images/b_5.png" class="circle3" v-show="userData.chose[2] == 'left'">
+                <img src="assets/images/b_6.png" class="circle3" v-show="userData.chose[2] == 'right'">
+                <img src="assets/images/b_7.png" class="circle4" v-show="userData.chose[3] == 'left'">
+                <img src="assets/images/b_8.png" class="circle4" v-show="userData.chose[3] == 'right'">
             </div>
         </div>
     </transition>
@@ -317,7 +317,15 @@
 </div>
 <!--要求横屏-->
 <div class="sp container" style="display:none;">
-    <img src="assets/images/hp_ts.png" class="sp-pic">
+    <!--<img src="assets/images/hp_ts.png" class="sp-pic">-->
+    <img src="assets/images/p1_bg.jpg" class="sp-bg">
+    <img src="assets/images/p2_img_01.png" class="sp-pic">
+</div>
+
+<!--竖屏查看结果-->
+<div class="tip-sp" style="display:none;">
+    <img src="assets/images/p8_01.png" class="pic1">
+    <img src="assets/images/p8_02.png" class="pic2">
 </div>
 
 <!--<audio id="bgm" src="music/music.mp3?v1" preload="auto" loop="true" class="iosPreload"></audio>-->
