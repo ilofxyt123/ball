@@ -556,8 +556,8 @@ var options = {
             _this.gameState = _this.state["runCurve"]
 
             webgl.runCurve( function(){
-                three.camera.rotation.y = 0;
-                three.camera.rotation.x = 0
+                // three.camera.rotation.y = 0;
+                // three.camera.rotation.x = 0
                 // _this.gameState = _this.state["waitChose"]
                 var stage = _this.mapData.stage
                 _this.gameState = _this.state[ stage ]
@@ -566,7 +566,7 @@ var options = {
                 TweenMax.to(obj,1,{speedZ:obj.startSpeedZ,onComplete:function(){
                     _this.gravity.allow = true;
                     var preRoad = _this.mapData[_this.mapData.preStage].roadFBXGroup
-                    three.scene.remove( preRoad )
+                    // three.scene.remove( preRoad )
                 }})
             } );
 
@@ -1326,17 +1326,20 @@ var webgl = new function(){
     this.mapData = {
         stage0:{
             index:0,
-            depth:405,
-            segments:5,
+            depth:243,
+            segments:3,
             width:40,
             offset:new THREE.Vector3(),//起点的全局偏移
             start:new THREE.Vector3( 0, 0, 0 ),//内部起点
-            end:new THREE.Vector3( 0, 0, -405 ),//内部终点
-            g_end:new THREE.Vector3(0, 0, -405),//全局end
-            distance:new THREE.Vector3( 0, 0, -200 ),//内部distance
-            g_distance:new THREE.Vector3( 0, 0, -200 ),//全局减速点
+            end:new THREE.Vector3( 0, 0, -243 ),//内部终点
+            g_end:new THREE.Vector3(0, 0, -243),//全局end
+            distance:new THREE.Vector3( 0, 0, -120 ),//内部distance
+            g_distance:new THREE.Vector3( 0, 0, -120 ),//全局减速点
             dir:undefined,
             roadFBXGroup:undefined,
+            builder:{
+
+            }
         },
         stage1:{
             index:1,
@@ -1416,7 +1419,7 @@ var webgl = new function(){
             right:{//右岔路
                 stone:{
                     name:"",
-                    position:new THREE.Vector3(10,0,-450),
+                    position:new THREE.Vector3(-10,0,-300),
                     g_position:new THREE.Vector3(),
                     scale:new THREE.Vector3(268,207,1),
                     width:20,
@@ -1424,56 +1427,56 @@ var webgl = new function(){
                 },
                 left_grass:{
                     name:"9",
-                    position:new THREE.Vector3(0,-10,-100),
+                    position:new THREE.Vector3(0,-5,-100),
                     scale:new THREE.Vector3(1136,220,1),
                     texture:undefined,
                 },
                 left_build1:{
                     name:"1",
-                    position:new THREE.Vector3(-50,10,-250),
+                    position:new THREE.Vector3(-40,10,-150),
                     scale:new THREE.Vector3(411,287,1),
                     texture:undefined
                 },
                 left_build2:{
                     name:"3",
-                    position:new THREE.Vector3(-75, 10,-350),
+                    position:new THREE.Vector3(-50, 10,-250),
                     scale:new THREE.Vector3(449,325,1),
                     texture:undefined
                 },
                 left_cow:{
                     name:"5",
-                    position:new THREE.Vector3(-50, 10,-320),
+                    position:new THREE.Vector3(-30, 10,-300),
                     scale:new THREE.Vector3(182,152,1),
                     texture:undefined
                 },
                 left_tree1:{
                     name:"2",
-                    position:new THREE.Vector3(-50, 10,-380),
+                    position:new THREE.Vector3(-40, 10,-350),
                     scale:new THREE.Vector3(298,353,1),
                     texture:undefined
                 },
                 left_build3:{
                     name:"4",
-                    position:new THREE.Vector3(-50,10,-450),
+                    position:new THREE.Vector3(-40,10,-400),
                     scale:new THREE.Vector3(449,325,1),
                     texture:undefined
                 },
 
                 right_build1:{
                     name:"6",
-                    position:new THREE.Vector3(75, 10,-300),
+                    position:new THREE.Vector3(50, 10,-300),
                     scale:new THREE.Vector3(505,417,1),
                     texture:undefined
                 },
                 right_build2:{
                     name:"8",
-                    position:new THREE.Vector3(50,10,-300),
+                    position:new THREE.Vector3(70,10,-300),
                     scale:new THREE.Vector3(338,256,1),
                     texture:undefined
                 },
                 right_tree1:{
                     name:"7",
-                    position:new THREE.Vector3(100,10,-200),
+                    position:new THREE.Vector3(60,13,-200),
                     scale:new THREE.Vector3(825,612,1),
                     texture:undefined
                 },
@@ -1504,56 +1507,56 @@ var webgl = new function(){
                 },
                 left_grass:{
                     name:"1",
-                    position:new THREE.Vector3(-60,10,-100),
+                    position:new THREE.Vector3(-50,6,-100),
                     scale:new THREE.Vector3(465,249,1),
                     texture:undefined,
                 },
                 left_stone:{
                     name:"11",
-                    position:new THREE.Vector3(-60,10,-102),
+                    position:new THREE.Vector3(-50,8,-150),
                     scale:new THREE.Vector3(462,248,1),
                     texture:undefined,
                 },
                 left_people:{
                     name:"3",
-                    position:new THREE.Vector3(-60,10,-100),
+                    position:new THREE.Vector3(-40,10,-150),
                     scale:new THREE.Vector3(118,242,1),
                     texture:undefined,
                 },
                 left_build1:{
                     name:"4",
-                    position:new THREE.Vector3(-50,10,-250),
+                    position:new THREE.Vector3(-60,10,-220),
                     scale:new THREE.Vector3(486,453,1),
                     texture:undefined
                 },
                 left_build2:{
                     name:"5",
-                    position:new THREE.Vector3(-50, 10,-350),
+                    position:new THREE.Vector3(-50, 10,-300),
                     scale:new THREE.Vector3(213,284,1),
                     texture:undefined
                 },
 
                 right_grass:{
                     name:"2",
-                    position:new THREE.Vector3(50, 10,-100),
-                    scale:new THREE.Vector3(239,232,1),
+                    position:new THREE.Vector3(60, 10,-130),
+                    scale:new THREE.Vector3(265,224,1),
                     texture:undefined
                 },
                 right_build1:{
                     name:"6",
-                    position:new THREE.Vector3(50, 10,-300),
+                    position:new THREE.Vector3(60, 10,-300),
                     scale:new THREE.Vector3(389,514,1),
                     texture:undefined
                 },
                 right_build2:{
                     name:"7",
-                    position:new THREE.Vector3(100,10,-300),
+                    position:new THREE.Vector3(80,10,-300),
                     scale:new THREE.Vector3(556,454,1),
                     texture:undefined
                 },
                 right_build3:{
                     name:"8",
-                    position:new THREE.Vector3(100,10,-300),
+                    position:new THREE.Vector3(50,15,-350),
                     scale:new THREE.Vector3(441,325,1),
                     texture:undefined
                 },
@@ -1569,38 +1572,38 @@ var webgl = new function(){
                 },
                 left_grass:{
                     name:"1",
-                    position:new THREE.Vector3(0,-10,-100),
-                    scale:new THREE.Vector3(1136,176,1),
+                    position:new THREE.Vector3(0,-5,-50),
+                    scale:new THREE.Vector3(1531,321,1),
                     texture:undefined,
                 },
                 left_build1:{
                     name:"2",
-                    position:new THREE.Vector3(-50,10,-250),
+                    position:new THREE.Vector3(-70,10,-100),
                     scale:new THREE.Vector3(603,654,1),
                     texture:undefined
                 },
                 left_horse:{
                     name:"5",
-                    position:new THREE.Vector3(-50, 10,-320),
+                    position:new THREE.Vector3(-60, 10,-150),
                     scale:new THREE.Vector3(742,331,1),
                     texture:undefined
                 },
 
                 right_build1:{
                     name:"3",
-                    position:new THREE.Vector3(75, 10,-300),
+                    position:new THREE.Vector3(70, 10,-100),
                     scale:new THREE.Vector3(684,752,1),
                     texture:undefined
                 },
                 right_build2:{
                     name:"6",
-                    position:new THREE.Vector3(50,10,-300),
+                    position:new THREE.Vector3(60,10,-250),
                     scale:new THREE.Vector3(727,304,1),
                     texture:undefined
                 },
                 right_couple:{
                     name:"4",
-                    position:new THREE.Vector3(100,10,-200),
+                    position:new THREE.Vector3(50,10,-150),
                     scale:new THREE.Vector3(293,335,1),
                     texture:undefined
                 },
@@ -1630,32 +1633,33 @@ var webgl = new function(){
                 },
                 left_grass:{
                     name:"1",
-                    position:new THREE.Vector3(-60,10,-100),
+                    position:new THREE.Vector3(-50,3,-50),
                     scale:new THREE.Vector3(395,248,1),
-                    texture:undefined,
-                },
-                left_couple:{
-                    name:"4",
-                    position:new THREE.Vector3(-60,10,-100),
-                    scale:new THREE.Vector3(523,344,1),
                     texture:undefined,
                 },
                 left_build1:{
                     name:"2",
-                    position:new THREE.Vector3(-50,10,-250),
+                    position:new THREE.Vector3(-50,15,-100),
                     scale:new THREE.Vector3(522,572,1),
                     texture:undefined
+                },
+                left_couple:{
+                    name:"4",
+                    position:new THREE.Vector3(-50,15,-200),
+                    scale:new THREE.Vector3(523,344,1),
+                    texture:undefined,
                 },
 
                 right_build1:{
                     name:"3",
-                    position:new THREE.Vector3(50, 10,-300),
+                    position:new THREE.Vector3(60, 15,-100),
                     scale:new THREE.Vector3(682,748,1),
                     texture:undefined
                 },
+
                 right_horse:{
                     name:"5",
-                    position:new THREE.Vector3(100,10,-300),
+                    position:new THREE.Vector3(65,15,-250),
                     scale:new THREE.Vector3(656,330,1),
                     texture:undefined
                 },
@@ -1671,38 +1675,38 @@ var webgl = new function(){
                 },
                 left_people:{
                     name:"1",
-                    position:new THREE.Vector3(-60,10,-100),
+                    position:new THREE.Vector3(-50,5,-50),
                     scale:new THREE.Vector3(362,297,1),
                     texture:undefined,
                 },
                 left_build1:{
                     name:"4",
-                    position:new THREE.Vector3(-60,10,-100),
+                    position:new THREE.Vector3(-65,15,-100),
                     scale:new THREE.Vector3(469,371,1),
                     texture:undefined,
                 },
                 left_build2:{
                     name:"5",
-                    position:new THREE.Vector3(-50,10,-250),
+                    position:new THREE.Vector3(-50,10,-150),
                     scale:new THREE.Vector3(535,403,1),
                     texture:undefined
                 },
 
                 right_build1:{
                     name:"2",
-                    position:new THREE.Vector3(50, 10,-300),
+                    position:new THREE.Vector3(50, 10,-100),
                     scale:new THREE.Vector3(724,508,1),
                     texture:undefined
                 },
                 right_build2:{
                     name:"3",
-                    position:new THREE.Vector3(50, 10,-300),
+                    position:new THREE.Vector3(50, 10,-150),
                     scale:new THREE.Vector3(592,175,1),
                     texture:undefined
                 },
                 right_build3:{
                     name:"6",
-                    position:new THREE.Vector3(50, 10,-300),
+                    position:new THREE.Vector3(50, 10,-200),
                     scale:new THREE.Vector3(568,227,1),
                     texture:undefined
                 },
@@ -1733,45 +1737,45 @@ var webgl = new function(){
                 },
                 left_grass:{
                     name:"1",
-                    position:new THREE.Vector3(-60,10,-100),
-                    scale:new THREE.Vector3(395,248,1),
+                    position:new THREE.Vector3(-50,5,-80),
+                    scale:new THREE.Vector3(370,314,1),
                     texture:undefined,
                 },
                 left_people:{
-                    name:"4",
-                    position:new THREE.Vector3(-60,10,-100),
-                    scale:new THREE.Vector3(523,344,1),
+                    name:"2",
+                    position:new THREE.Vector3(-60,10,-150),
+                    scale:new THREE.Vector3(353,398,1),
                     texture:undefined,
                 },
                 left_build1:{
-                    name:"2",
-                    position:new THREE.Vector3(-50,10,-250),
-                    scale:new THREE.Vector3(522,572,1),
+                    name:"3",
+                    position:new THREE.Vector3(-60,10,-170),
+                    scale:new THREE.Vector3(712,400,1),
                     texture:undefined
                 },
 
                 right_pool:{
-                    name:"3",
-                    position:new THREE.Vector3(50, 10,-300),
-                    scale:new THREE.Vector3(682,748,1),
+                    name:"4",
+                    position:new THREE.Vector3(50,0,-100),
+                    scale:new THREE.Vector3(538,145,1),
                     texture:undefined
                 },
                 right_people:{
                     name:"5",
-                    position:new THREE.Vector3(100,10,-300),
-                    scale:new THREE.Vector3(656,330,1),
+                    position:new THREE.Vector3(70,10,-250),
+                    scale:new THREE.Vector3(348,222,1),
                     texture:undefined
                 },
                 right_tree:{
-                    name:"5",
-                    position:new THREE.Vector3(100,10,-300),
-                    scale:new THREE.Vector3(656,330,1),
+                    name:"6",
+                    position:new THREE.Vector3(90,10,-170),
+                    scale:new THREE.Vector3(876,542,1),
                     texture:undefined
                 },
                 right_stone:{
-                    name:"5",
-                    position:new THREE.Vector3(100,10,-300),
-                    scale:new THREE.Vector3(656,330,1),
+                    name:"7",
+                    position:new THREE.Vector3(70,10,-300),
+                    scale:new THREE.Vector3(511,191,1),
                     texture:undefined
                 },
             },//left
@@ -1785,22 +1789,22 @@ var webgl = new function(){
                     halfWidth:10
                 },
                 left_tree1:{
-                    name:"2",
-                    position:new THREE.Vector3(-50,10,-250),
-                    scale:new THREE.Vector3(522,572,1),
+                    name:"1",
+                    position:new THREE.Vector3(-60,15,-150),
+                    scale:new THREE.Vector3(578,732,1),
                     texture:undefined
                 },
 
                 right_grass:{
-                    name:"1",
-                    position:new THREE.Vector3(-60,10,-100),
-                    scale:new THREE.Vector3(395,248,1),
+                    name:"2",
+                    position:new THREE.Vector3(50,10,-100),
+                    scale:new THREE.Vector3(803,425,1),
                     texture:undefined,
                 },
                 right_people:{
-                    name:"5",
-                    position:new THREE.Vector3(100,10,-300),
-                    scale:new THREE.Vector3(656,330,1),
+                    name:"3",
+                    position:new THREE.Vector3(70,10,-200),
+                    scale:new THREE.Vector3(324,330,1),
                     texture:undefined
                 },
             }//right
@@ -1941,7 +1945,7 @@ webgl.init = function(){
                 case "branch":
                     group.scale.multiplyScalar( 16 )
                     option.obj = group;
-                    group.position.y = -5
+                    group.position.y = -4.5
                     group.children[1].material = material
                     break;
             }
@@ -2448,7 +2452,7 @@ webgl.initCacheData = function(){
                 right_fbx = _this.FBXData['curve'].obj[1].clone()
                 right_fbx.rotateZ( Math.PI )
                 right_fbx.rotateX( Math.PI )
-                right_fbx.position.add( new THREE.Vector3(0,0,0) )
+                right_fbx.position.add( new THREE.Vector3(0,0,-3.5) )
                 group.add( right_fbx )
             }
 
@@ -2619,9 +2623,10 @@ webgl.afterChose = function( dir ){
     }
 
     //生成下一个stage岔路口的曲线数据
-    _this.updateCurvesData( 49, _this.mapData.curveR );
+    _this.updateCurvesData( 49, _this.mapData.curveR-1 );
     //得到下一个stage
     _this.updateNextMapInfo();
+
 
     _this.mapData[ _this.mapData.stage ].roadFBXGroup = _this.cacheData[ _this.mapData.stage ][ dir ]
     _this.putRoadOnRightPosition()
@@ -3317,9 +3322,12 @@ webgl.setCameraFollowBall = function(){
 webgl.setCameraPositionOnCurve = function( t ){
 
     //update position
-    var position = this.runData.getPoint( t )
-    three.camera.position.x = position.x
-    three.camera.position.z = position.z
+    // var position = this.runData.getPoint( t )
+    three.camera.position.x += this.ballOptions.speedX
+    three.camera.position.z += this.ballOptions.speedZ
+    // three.camera.position.x = position.x
+    // three.camera.position.z = position.z
+
 
     //update rotation
     var v = new THREE.Vector3().subVectors( this.ballMesh.position, three.camera.position )
@@ -3351,7 +3359,7 @@ webgl.runCurve = function( callback ){
 
         prePos.copy( position )
 
-    },onUpdateParams:[obj],onComplete:callback} )
+    },onUpdateParams:[obj],onComplete:callback,ease:"Linear.easeNone"} )
 
 };
 
@@ -3550,7 +3558,7 @@ webgl.render = function(){
                 //     three.camera.lookAt( new THREE.Vector3().addVectors( _this.ballMesh.position, new THREE.Vector3(0,20,0)) )
                 // }
                 _this.setCameraPositionOnCurve( _this.cameraT )
-                three.camera.lookAt( new THREE.Vector3().addVectors( _this.ballMesh.position, new THREE.Vector3(0,20,0)) )
+                // three.camera.lookAt( new THREE.Vector3().addVectors( _this.ballMesh.position, new THREE.Vector3(0,20,0)) )
 
                 break;
             case "bump":

@@ -52,7 +52,7 @@
 </div>
 <style>
     .P_loading{}
-        .P_loading .loading-box{width:6.4rem;top:3.5rem;left:50%;margin-left:-3.2rem;position: absolute;}
+        .P_loading .loading-box{width:100%;top:3.5rem;left:50%;margin-left:-3.2rem;position: absolute;}
         .loading-box .fish{width:6.4rem;height:2.08rem;top:0;position:relative;background-image:url("assets/images/p1.jpg");background-repeat: no-repeat;background-size:19.2rem 2.08rem;}
         .loading-box .number-box{width:100%;text-align: center;word-spacing:-0.2rem;}
             .number-box .static{ position:static }
@@ -172,8 +172,11 @@
     <!--WEBGL-->
     <transition enter-active-class="ani-fadeIn" leave-active-class="ani-fadeOut">
         <div class="container P_webgl" v-show="pwebgl.visible" style="display:none;">
-            <div class="scene-bg">
-                <img src="assets/images/stage1/scenebg0.jpg" class="scene-bg0">
+            <div class="scene-bg-box">
+                <img src="assets/images/stage1/scenebg0.jpg" class="scene-bg scene-bg0">
+                <img src="assets/images/stage1/p3_img_bg.jpg" class="scene-bg scene-bg1" style="display: none;">
+                <img src="assets/images/p2_img_0.png" class="scene-bg scene-bg2" style="display: none;">
+                <img src="assets/images/p5_img_0.png" class="scene-bg scene-bg3" style="display: none;">
             </div>
             <div id="WebGL" class="gl-container">
                 <div id="FPS"></div>
