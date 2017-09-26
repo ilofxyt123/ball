@@ -305,8 +305,6 @@ Object.assign( Utils.ImageLoader.prototype,{
                 img["direction"] = urls[_this.haveload].direction
             }
 
-            console.log( urls[_this.haveload].url )
-
         }
 
         function start(){
@@ -1240,24 +1238,95 @@ var webgl = new function(){
             url:this.modelsUrl+"bridge3.fbx",
             position:new THREE.Vector3(),
             obj:undefined,
+            total:2,
+            have:0,
         },
         curve:{
             name:"curve",
             url:this.modelsUrl+"curve3.fbx",
             position:new THREE.Vector3(),
-            obj:{},
+            obj:{
+                // 0:new THREE.Group(),
+                // 1:new THREE.Group()
+            },
+            total:3,
+            have:0,
         },
         branch:{
             name:"branch",
             url:this.modelsUrl+"branch2.fbx",
             position:new THREE.Vector3(),
             obj:undefined,
+            total:3,
+            have:0,
         }
     }
+    this.newFBXData = {
+        bridge:{
+            floor:{
+                url:this.modelsUrl + "bridge/floor.fbx",
+                texture:this.modelsUrl + "bridge/floor.png",
+                group:"bridge"
+            },
+            column:{
+                url:this.modelsUrl + "bridge/column.fbx",
+                texture:this.modelsUrl + "bridge/column.png",
+                group:"bridge"
+            },
+        },
+        branch:{
+            floor:{
+                url:this.modelsUrl + "branch/floor.fbx",
+                texture:this.modelsUrl + "branch/floor.png",
+                group:"branch"
+            },
+            column:{
+                url: this.modelsUrl + "branch/column.fbx",
+                texture:this.modelsUrl + "branch/column.jpg",
+                group:"branch"
+            },
+            curveLine:{
+                url:this.modelsUrl + "branch/curveLine.fbx",
+                texture:this.modelsUrl + "branch/curveLine.png",
+                group:"branch"
+            }
+        },
+        curve:{
+            floor:{
+                url:this.modelsUrl + "curve/floor.fbx",
+                texture:this.modelsUrl + "curve/floor.jpg",
+                group:"curve"
+            },
+            column:{
+                url:this.modelsUrl + "curve/column.fbx",
+                texture:this.modelsUrl + "curve/column.jpg",
+                group:"curve"
+            },
+            curveLine:{
+                url:this.modelsUrl + "curve/curveLine.fbx",
+                texture:this.modelsUrl + "curve/curveLine.jpg",
+                group:"curve"
+            }
+        },
+    }
+
 
     //待加载的纹理--配置信息
     this.TextureData={
-
+        bridge:{
+            floor:undefined,
+            column:undefined,
+        },
+        branch:{
+            floor:undefined,
+            column:undefined,
+            curveLine:undefined,
+        },
+        curve:{
+            floor:undefined,
+            column:undefined,
+            curveLine:undefined,
+        },
     };
 
     const SQ3 = Math.sqrt(3);
@@ -1987,7 +2056,6 @@ webgl.init = function(){
         })
     }
 
-
     // var t = new THREE.TextureLoader().load( main.modelUrl+"bridge.jpg" )
     // t.needsUpdate = true
     // for( var prop in this.FBXData ){
@@ -2044,29 +2112,121 @@ webgl.init = function(){
 
 };
 webgl.load = function(){
-    for(var prop in this.OBJData){
-        var config = this.OBJData[prop];
-        // three.loadMTL({
-        //     modelName:config.name,
-        //     mtlFile:config.mtlFile,
-        //     objFile:config.objFile,
-        //     baseUrl:config.baseUrl,
-        // })
-        three.loadOBJ({
-            modelName:config.name,
-            objFile:config.objFile,
-            callback:function(group){
-                webgl.stone1 = group.children[0];
-                webgl.stone2 = group.children[1];
-                webgl.liusu_up = group.children[2];
-                webgl.liusu_center = group.children[3];
-                webgl.planet = group.children[4];
+    var _this = this;
+    var t = new THREE.TextureLoader().load( main.picUrl+"pf.jpg" )
 
-                // object.children[0].material = material;
-            }
-        })
+    var fbxConfig = this.newFBXData
+
+    for( var name in fbxConfig ){
+        var group = fbxConfig[ name ]
+        for( var part in group ){
+            var option = group[ part ]
+            //floorConfig, floor
+            loadFBX( option, part )
+        }
     }
 
+
+
+    function loadFBX( option, part ){
+        var url = option.url
+        var group_name = option.group
+        var fbxLoader = new THREE.FBXLoader()
+
+        var texture = three.loadTexture({
+            url:option.texture
+        })
+        var material = new THREE.MeshLambertMaterial({map:texture})
+
+        fbxLoader.load( url, function( model ){
+
+            if( group_name == "curve" ){
+                //弯道单独处理
+                _this.FBXData[ group_name ].obj[ 1 ].add( model )
+            }else {
+                _this.FBXData[ group_name ].obj.add( model )
+            }
+
+            console.log( part )
+
+            switch( option.name ){
+                case "bridge":
+                    group.scale.multiplyScalar( 16 )
+                    group.position.set( -1.5,0,0)
+                    option.obj = group;
+
+                    group.traverse( function( object ){
+                        if( object instanceof THREE.Mesh ){
+                            // object.material.color.setRGB(255,0,0)
+                            object.material = material
+                        }
+                    } )
+                    break;
+                case "curve":
+                    group.traverse( function( object ){
+                        if( object instanceof THREE.Mesh ){
+                            // object.material.color.setRGB(255,0,0)
+                            object.material = material
+                        }
+                    } )
+                    group.scale.multiplyScalar( 16.5 )
+                    option.obj[ _this.mapData.left ] = group.clone().rotateY( -Math.PI/2 );
+                    option.obj[ _this.mapData.left ].position.add( new THREE.Vector3( 54, 0, -184) )
+                    option.obj[ _this.mapData.right ] = group.clone()
+
+                    break;
+                case "branch":
+                    group.scale.multiplyScalar( 16 )
+                    option.obj = group;
+                    group.position.y = -4.5
+                    group.children[1].material = material
+                    break;
+            }
+
+            //判断组件是否全部加载完，加载完进行翻转 + 克隆
+            _this.FBXData[ group_name ].have ++
+
+            model.traverse( function( object ){
+                if( object instanceof THREE.Mesh ){
+                    // object.material.color.setRGB(255,0,0)
+                    object.material = material
+                }
+            } )
+
+
+
+            if( _this.FBXData[ group_name ].have == _this.FBXData[ group_name ].total){
+                switch( group_name ){
+                    case "bridge":
+                        _this.FBXData[ "bridge" ].obj.scale.multiplyScalar( 16 )
+                        break;
+                    case "branch":
+                        _this.FBXData[ "branch" ].obj.scale.multiplyScalar( 16 )
+
+                        break;
+                    case "curve":
+                        _this.FBXData[ "curve" ].obj[1].scale.multiplyScalar( 16.5 )
+                        break;
+                }
+            }
+
+
+
+
+
+
+
+
+
+
+        },function(e){
+            // console.log(e)
+        },function(e){
+            // console.log(e)
+        })
+
+
+    }
 };
 webgl.loadCallback = function(){
     var _this = this;
@@ -2089,7 +2249,7 @@ webgl.loadCallback = function(){
         three.scene.add(ambientLight);
     }
     function initFog(){
-        var fog = new THREE.FogExp2( 0xeeeeee, 0.003)
+        var fog = new THREE.FogExp2( 0xeeeeee, 0.002)
         three.scene.fog = fog
     }
     function initGravity(){
@@ -2452,19 +2612,40 @@ webgl.initCacheData = function(){
 
         //bridge模型数量,生成直线
         var number = option.depth / _this.FBXData['bridge'].depth
+        if( option.index == 4 ){
+            number *= 2
+        }
         for( var i = 0; i < number; i ++ ){
             var model = _this.FBXData['bridge'].obj.clone();
             model.position.z = -i * _this.FBXData['bridge'].depth
             group.add( model )
         }
 
+        var offset_inner = new THREE.Vector3().addVectors( option.end, new THREE.Vector3(0,0,0.5) )
         //生成岔路
         if( option.index < 4 ){
 
             var branchFBX = _this.FBXData['branch'].obj.clone();
-            var offset_inner = new THREE.Vector3().addVectors( option.end, new THREE.Vector3(0,0,0.5))
             branchFBX.position.add( offset_inner )
             group.add( branchFBX )
+
+        }else{
+
+            var doorTexture = new THREE.Texture( main.ImageResult['door'][0] )
+            doorTexture.needsUpdate = true;
+            var doorMaterial = new THREE.MeshLambertMaterial( {
+                map : doorTexture,
+                transparent : true,
+            } )
+
+            var doorPlaneGeometry = three.getPlaneGeo({
+                width:434,
+                height:417
+            })
+
+            var doorMesh = new THREE.Mesh( doorPlaneGeometry, doorMaterial )
+            doorMesh.position.add( offset_inner )
+            group.add( doorMesh )
 
         }
 
@@ -2674,11 +2855,12 @@ webgl.initBall = function( callback ){
     var lightMaterial = new THREE.MeshBasicMaterial({
         map : lightTexture,
         transparent : true,
+        opacity:0.6
     })
     var lightMesh = new THREE.Mesh( lightGeo, lightMaterial )
     lightMesh.scale.x = 1.05
     lightMesh.scale.y = 1.05
-    lightMesh.position.z = _this.ballOptions.ballRadius
+    lightMesh.position.add(new THREE.Vector3( -0.3,0.6,_this.ballOptions.ballRadius) )
     _this.ballGroup.add( lightMesh )
 
     this.lightMesh = lightMesh
@@ -3117,7 +3299,7 @@ webgl.ballScrollTo = function( destination, duration, callback ){
         webgl.ballOptions.speedX = v.x;
         webgl.ballOptions.speedZ = v.z;
         prePos.copy( position )
-    },onUpdateParams:[position],onComplete:callback})
+    },onUpdateParams:[position],onComplete:callback,ease:"Linear.easeNone"})
 
 }
 
@@ -3422,35 +3604,41 @@ webgl.getViewSpeed = function(){
     var range = 100
     this.ballOptions.viewSpeedZ =Math.abs( this.ballOptions.speedZ ) / ( this.ballOptions.maxZ - this.ballOptions.minZ ) * range
 };
-webgl.calCollision = function(){
-    var scope = this;
-    var left_distance = calEdge( this.ballGroup.position.x );
+webgl.calCollision = (function(){
 
-    //z方向速度范围
-    var range = [ this.ballOptions.minZ, this.ballOptions.maxZ ]
-
-    if( left_distance < 5 ){
-        this.ballOptions.speedZ = ( left_distance / 5 ) * ( range[0] - range[1] ) + this.ballOptions.maxZ;
-
-        //x方向速度最小为0
-        if( calEdge( this.ballGroup.position.x + this.ballOptions.speedX ) < 0 ){
-            this.ballOptions.speedX = 0;
-        }
-    }else{
-        this.ballOptions.speedZ = ( range[0] - range[1] ) * this.ballOptions.energy + this.ballOptions.maxZ
-    }
+    var _this = webgl;
 
     // 球的外边缘 相距 道路两侧 的距离
-    function calEdge( x ){
+    var calEdge = function( x ){
         var distance;
-        var roadWidth = scope.roadOptions.width;
+        var roadWidth = _this.roadOptions.width;
 
         //路宽度 / 2 - 距离中点的绝对值
-        distance = ( roadWidth / 2 ) - Math.abs( x - scope.mapData[ scope.mapData.stage ].offset.x )
-        distance -= scope.ballOptions.ballRadius;
+        distance = ( roadWidth / 2 ) - Math.abs( x - _this.mapData[ _this.mapData.stage ].offset.x )
+        distance -= _this.ballOptions.ballRadius;
         return distance
     }
-};
+
+    //z方向速度范围
+    var range = [ _this.ballOptions.minZ, _this.ballOptions.maxZ ]
+
+    return function(){
+
+        var left_distance = calEdge( _this.ballGroup.position.x );
+
+        if( left_distance < 5 ){
+            _this.ballOptions.speedZ = ( left_distance / 5 ) * ( range[0] - range[1] ) + _this.ballOptions.maxZ;
+
+            //x方向速度最小为0
+            if( calEdge( _this.ballGroup.position.x + _this.ballOptions.speedX ) < 0 ){
+                _this.ballOptions.speedX = 0;
+            }
+        }else{
+            _this.ballOptions.speedZ = ( range[0] - range[1] ) * _this.ballOptions.energy + _this.ballOptions.maxZ
+        }
+    }
+
+})();
 webgl.testStone = function(){
     var stage = this.mapData.stage
     var direction = this.curveType
@@ -3485,7 +3673,7 @@ webgl.setCameraFollowBall = function(){
     three.camera.position.x = this.ballGroup.position.x
     three.camera.position.z = this.ballGroup.position.z+70
 };
-webgl.setCameraPositionOnCurve = function( t ){
+webgl.setCameraPositionOnCurve = function( ){
 
     //update position
     // var position = this.runData.getPoint( t )
@@ -3510,11 +3698,11 @@ webgl.runCurve = function( callback ){
     var position = new THREE.Vector3().copy( prePos );
 
     var T = TweenMax.to( obj,4,{t:1,onUpdate:function( obj ){
-        if( obj.t > 0.1 ){
-            _this.cameraT = obj.t - 0.1
-        }else{
-            _this.cameraT = 0
-        }
+        // if( obj.t > 0.1 ){
+        //     _this.cameraT = obj.t - 0.1
+        // }else{
+        //     _this.cameraT = 0
+        // }
         position.copy( _this.runData.getPoint( obj.t ) )
         v.subVectors( position, prePos )
         _this.ballOptions.speedX = v.x
@@ -3736,7 +3924,7 @@ webgl.render = function(){
                 //     _this.setCameraPositionOnCurve( _this.cameraT )
                 //     three.camera.lookAt( new THREE.Vector3().addVectors( _this.ballMesh.position, new THREE.Vector3(0,20,0)) )
                 // }
-                _this.setCameraPositionOnCurve( _this.cameraT )
+                _this.setCameraPositionOnCurve()
                 // three.camera.lookAt( new THREE.Vector3().addVectors( _this.ballMesh.position, new THREE.Vector3(0,20,0)) )
 
                 break;
@@ -3746,8 +3934,8 @@ webgl.render = function(){
                 this.setCameraFollowBall()
                 break;
             case "end":
-                main.stopRender()
-                main.gameEnd()
+                main.stopRender();
+                main.gameEnd();
                 break;
         }
     }
@@ -3863,11 +4051,11 @@ var main = new function(){
         //     group:"girl"
         // },
         {
-            url:this.picUrl+"ball.png",
+            url:this.picUrl+"ball2.jpg",
             group:"boy"
         },
         {
-            url:this.picUrl+"ball.png",
+            url:this.picUrl+"ball2.jpg",
             group:"girl"
         },
         // {
@@ -3897,6 +4085,10 @@ var main = new function(){
         {
             url:this.picUrl+"light.png",
             group:"light"
+        },
+        {
+            url:this.picUrl+"door.png",
+            group:"door"
         },
 
 
@@ -4570,7 +4762,8 @@ var main = new function(){
 /***********************流程***********************/
 main.init=function(){
     three.init();
-    webgl.init();
+    // webgl.init();
+    webgl.load();
 };
 main.start=function(){
 
@@ -4705,6 +4898,12 @@ main.gameEnd = function(){
     //调出top按钮
     $(".reason-btn").show()
     // $(".rule-btn").hide()
+
+
+    $(".tip-sp").fi()
+
+
+
 
 
 }
@@ -4843,18 +5042,16 @@ function onOrientChange3(){
             vm.presult.visible = true;
             vm.top.visible = true;
             main.haveGetResult = true
+
+            $(".tip-sp").fo();
         }
-        $(".hp").hide()
-        vm.hpwarn.visible = false;
+
+        window.removeEventListener( "orientationchange", onOrientChange3 )
+        window.addEventListener( "orientationchange", onOrientChange1 )
 
     }
 
-    else if(window.orientation == 90 || window.orientation == -90) {
 
-        $(".hp").show()
-        vm.hpwarn.visible = true;
-
-    }
 }
 $(function(){
     window.addEventListener( "orientationchange", onOrientChange1 );
